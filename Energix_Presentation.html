@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energix — Keynote Presentation (Large & Clear)</title>
+  <!-- Google Fonts: Cairo for super crisp Arabic & Inter for English/Numbers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #070c14;
+      --card-bg: #101a2a;
+      --card-border: #24354f;
+      --accent-green: #00e676;
+      --accent-cyan: #00d2ff;
+      --accent-orange: #ff8a48;
+      --accent-purple: #ba68ff;
+      --text-white: #ffffff;
+      --text-muted: #9bb0cb;
+      --text-body: #f1f5f9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text-white);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Top Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #101a2a;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+      width: 9%;
+      transition: width 0.3s ease;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px 40px;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1280px;
+      height: 94%;
+      background: var(--bg);
+      border-radius: 24px;
+      padding: 35px 45px;
+      animation: slideIn 0.35s ease-out;
+      overflow-y: auto;
+    }
+    .slide.active { display: block; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(0, 230, 118, 0.12);
+      border: 1.5px solid var(--accent-green);
+      color: var(--accent-green);
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 900;
+      margin: 0 0 10px 0;
+      color: var(--text-white);
+      line-height: 1.25;
+    }
+    .subtitle {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    /* Grids */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin-top: 25px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    /* Big High-Contrast Cards */
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-green);
+      box-shadow: 0 15px 40px rgba(0, 230, 118, 0.15);
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card ul {
+      padding-right: 22px;
+      margin: 0;
+      color: var(--text-body);
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.8;
+    }
+    .card li { margin-bottom: 12px; }
+
+    /* Stat Numbers */
+    .stat-number {
+      font-family: 'Inter', sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--accent-green);
+      margin-bottom: 8px;
+      line-height: 1;
+      text-shadow: 0 0 25px rgba(0, 230, 118, 0.25);
+    }
+    .stat-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+    .stat-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Horizontal Operational Rules */
+    .rule-box {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-right: 6px solid var(--accent-green);
+      padding: 18px 25px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .rule-box:hover {
+      transform: translateX(-4px);
+      border-color: var(--accent-green);
+    }
+    .rule-badge {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    /* Images */
+    img.preview {
+      width: 100%;
+      border-radius: 16px;
+      border: 2px solid var(--card-border);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+    }
+
+    /* Bottom Control Bar */
+    .controls {
+      height: 75px;
+      background: #05080f;
+      border-top: 1.5px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 50px;
+    }
+    .btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      color: var(--text-white);
+      padding: 12px 28px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--accent-green);
+      color: #000;
+      border-color: var(--accent-green);
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+    }
+    .counter {
+      color: var(--text-muted);
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .fullscreen-btn {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .fullscreen-btn:hover { color: #fff; border-color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="slide-viewport">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide active">
+      <div class="badge">⚡ CAPSTONE 2026 | SMART WAREHOUSE IoT</div>
+      <h1 style="font-size: 48px;">Energix — Smart Energy Platform</h1>
+      <div class="subtitle" style="font-size: 24px;">نظام ذكي متكامل لترشيد طاقة المخازن بالـ IoT ومدعوم بمساعد الذكاء الاصطناعي Grok (xAI)</div>
+      
+      <div class="grid-3" style="margin-top: 40px;">
+        <div class="card" style="border-color: var(--accent-green); border-top-width: 6px;">
+          <div class="stat-number">65% - 70%</div>
+          <div class="stat-title">الوفر الإجمالي في الكهرباء</div>
+          <div class="stat-desc">وفر موثق أسبوعياً في فواتير الإضاءة بممرات المخازن الكبرى.</div>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan); border-top-width: 6px;">
+          <div class="stat-number" style="color: var(--accent-cyan);">20% Standby</div>
+          <div class="stat-title">وضع الاستعداد الآمن</div>
+          <div class="stat-desc">حماية لمبات الـ LED من التلف وتأمين رؤية واضحة لحركة الرافعات الشوكية.</div>
+        </div>
+        <div class="card" style="border-color: var(--accent-orange); border-top-width: 6px;">
+          <div class="stat-number" style="color: var(--accent-orange);">Grok (xAI)</div>
+          <div class="stat-title">المساعد الذكي Co-Pilot</div>
+          <div class="stat-desc">تحكم صوتي ونصي بالهاردوير وكشف استباقي للأعطال ومناطق الهدر.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <div class="slide">
+      <div class="badge" style="color: #ff5252; border-color: #ff5252; background: rgba(255,82,82,0.12);">🛑 THE PROBLEM</div>
+      <h1>التحديات التشغيلية والمالية لإضاءة المخازن التقليدية</h1>
+      <div class="subtitle">لماذا تفشل أساليب الإضاءة الحالية في المستودعات وسلاسل التوريد الكبرى؟</div>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">⚡ إهدار مالي حاد (24/7 Waste)</h3>
+          <ul>
+            <li>صفوف الإضاءة (High Bay) تظل تعمل بكامل طاقتها <b>100% طوال 24 ساعة دون انقطاع</b>.</li>
+            <li>ممرات كاملة تبقى فارغة لساعات مع استمرار استهلاك الكهرباء دون أي عائد.</li>
+            <li>تمثل الإضاءة ما يصل إلى <b>40% من إجمالي فاتورة كهرباء</b> المنشأة اللوجستية.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: #ff5252;">
+          <h3 style="color: #ff5252;">💥 تلف المصابيح السريع (Burnout)</h3>
+          <ul>
+            <li>التشغيل المستمر يرفع الحمل الحراري ويدمر درايفرات ومحولات الـ LED سريعاً.</li>
+            <li>حساسات الحركة العادية التي تطفئ النور كلياً (0%) تسبب <b>صدمات كهربائية وحرارية</b> للمبات.</li>
+            <li>تكاليف باهظة لاستبدال وصيانة الإضاءة المعلقة في الأسقف العالية (12 متراً).</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">📊 انعدام الرؤية البيانية (No Data)</h3>
+          <ul>
+            <li>افتقار مديري المخازن لتقارير أسبوعية تفصل حجم الهدر في كل ممر ومنشأة.</li>
+            <li>عدم وجود نظام تنبؤ بالأعطال: لا يُكتشف الحساس المعطل إلا بعد توقفه تماماً.</li>
+            <li>صعوبة اتخاذ قرارات مدروسة لتحسين استهلاك الطاقة وإدارة مساحات التخزين.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: THE SOLUTION -->
+    <div class="slide">
+      <div class="badge">🛡️ THE SOLUTION</div>
+      <h1>الحل المعتمد: نظام Energix التكيفي الذكي</h1>
+      <div class="subtitle">المعادلة الهندسية التي تجمع بين التوفير الأقصى وأمان العمال وحماية الأصول</div>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: var(--accent-green);">
+          <h3>🛡️ سر وضع الـ 20% Standby</h3>
+          <ul>
+            <li><b>الأمان أولاً:</b> يوفر رؤية واضحة ومستمرة لسائقي الرافعات الشوكية لمنع حوادث الاصطدام.</li>
+            <li><b>حماية المصابيح:</b> يمنع الصدمات الحرارية الكهربائية الناتجة عن الإطفاء الكلي 0%.</li>
+            <li><b>وفر هائل:</b> خفض الإضاءة إلى 20% يوفر <b>80% من الطاقة</b> في أوقات السكون.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">👁️ استشعار مزدوج للحركة والحرارة</h3>
+          <ul>
+            <li>دمج حساسات الحركة (PIR) مع حساسات الحرارة والتواجد البشري (DHT).</li>
+            <li><b>حل مشكلة العامل الثابت:</b> لو وقف العامل يفحص بضاعة لن ينطفئ النور في وجهه.</li>
+            <li>سرعة استجابة ورفع النور لـ 100% خلال <b>2 إلى 3 ثوانٍ فقط</b> فور الدخول.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">⚙️ أتمتة كاملة (Zero Friction)</h3>
+          <ul>
+            <li><b>نظام ذاتي 100%:</b> لا يتطلب أي تغيير في طريقة أو عادات عمل العمال اليومية.</li>
+            <li>تعتيم انسيابي ناعم (Smooth PWM Fading) يمنع الوميض والرعشة المجهدة للعين.</li>
+            <li>تصميم Modular مرن قابل للتطبيق في أي مخزن مهما اختلفت مساحته.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: THE 5 SMART RULES -->
+    <div class="slide">
+      <div class="badge">🧠 ALGORITHMIC LOGIC</div>
+      <h1>القواعد البرمجية الخمس للتحكم الذكي</h1>
+      <div class="subtitle">خوارزميات التحكم الأوتوماتيكي وحصاد ضوء النهار وتأمين الطوارئ القصوى</div>
+      
+      <div class="rule-box" style="border-right-color: var(--accent-green);">
+        <div><b style="color: var(--accent-green);">1. وضع الدخول والنشاط (Active 100%):</b> رفع الإضاءة لكامل السطوع فور رصد حركة أو حرارة خلال 2 إلى 3 ثوانٍ.</div>
+        <div class="rule-badge" style="background: rgba(0,230,118,0.15); color: var(--accent-green);">استجابة فورية</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-cyan);">
+        <div><b style="color: var(--accent-cyan);">2. وضع الاستعداد الذكي (Standby 20%):</b> التلاشي التلقائي بنعومة إلى 20% عند انعدام الحركة لمهلة محددة دون إطفاء كامل.</div>
+        <div class="rule-badge" style="background: rgba(0,210,255,0.15); color: var(--accent-cyan);">وفر 80% في السكون</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-orange);">
+        <div><b style="color: var(--accent-orange);">3. حصاد ضوء النهار (Daylight Harvesting):</b> خفض الإضاءة الصناعية بنسبة 40% إلى 60% نهاراً عبر حساس LDR.</div>
+        <div class="rule-badge" style="background: rgba(255,138,72,0.15); color: var(--accent-orange);">استغلال الشمس</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-purple);">
+        <div><b style="color: var(--accent-purple);">4. تخصيص المناطق الديناميكي (Dynamic Zoning):</b> إبقاء منطقة عمل العامل فقط عند 100% وتعتيم باقي طول الممر.</div>
+        <div class="rule-badge" style="background: rgba(186,104,255,0.15); color: var(--accent-purple);">تركيز النور للعمل</div>
+      </div>
+      <div class="rule-box" style="border-right-color: #ff5252;">
+        <div><b style="color: #ff5252;">5. أمان الطوارئ القصوى (Emergency Override):</b> إضاءة المخزن كاملاً بنسبة 100% فورياً عند استشعار حريق لتسهيل الهروب.</div>
+        <div class="rule-badge" style="background: rgba(255,82,82,0.15); color: #ff5252;">أمان الأرواح 100%</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: HARDWARE PROTOTYPE -->
+    <div class="slide">
+      <div class="badge">🎛️ HARDWARE PROTOTYPE</div>
+      <h1>النموذج الأولي الفيزيائي والمواصفات الهندسية</h1>
+      <div class="subtitle">المكونات الإلكترونية وحلول التحديات الهندسية المبتكرة في النموذج المصغر</div>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: var(--accent-green);">
+          <h3>🎛️ المتحكم والدوائر (MCU)</h3>
+          <ul>
+            <li>متحكم دقيق (Arduino Uno / Mega) لمعالجة إشارات الحساسات في حلقات سريعة.</li>
+            <li>منافذ PWM للتحكم الدقيق في التعتيم التدريجي دون أي رعشة بصرية.</li>
+            <li>شاشة LCD ميدانية تعرض الوضع الحالي (Active/Eco) والواط الموفر لحظياً.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">📡 حزمة المستشعرات الذكية</h3>
+          <ul>
+            <li>مستشعرات حركة PIR مجهزة بأسطوانات عزل وتوجيه (Blinders) لمنع تداخل الممرات.</li>
+            <li>مستشعر حرارة وتواجد DHT11 لتأكيد الوجود البشري في الممر.</li>
+            <li>مقاومات ضوئية LDR لقياس شدة ضوء النهار وحصاد طاقة الشمس.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">📐 معيار التطبيق الميداني</h3>
+          <ul>
+            <li>مجسم ممر مخزن مطلي بأسود غير لامع لمحاكاة الخواص الضوئية للمخازن الحقيقية.</li>
+            <li><b>معيار التوزيع الميداني:</b> مستشعر واحد لكل 8 إلى 10 أمتار على طول الممر.</li>
+            <li>ترميز لوني معتمد للأسلاك لمنع أي تداخلات أو تشويش في الإشارة.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: SOFTWARE PLATFORM -->
+    <div class="slide">
+      <div class="badge">💻 SOFTWARE PLATFORM</div>
+      <h1>منصة الويب السحابية ولوحة تحكم المخازن</h1>
+      <div class="subtitle">المراقبة الحية وتصنيف المنشآت واستخراج التقارير الأسبوعية التنفيذية (PDF)</div>
+      
+      <div class="grid-2">
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">⚡ مميزات لوحة التحكم السحابية</h3>
+          <ul>
+            <li><b>مؤشرات حية (KPIs):</b> تتبع إجمالي الكيلوواط المستهلك والموفر والمبالغ المالية الموفرة.</li>
+            <li><b>تصنيف المخازن الذكي:</b> تصنيف فوري للمنشآت (Efficient كفء، Moderate متوسط، High Usage هدر مرتفع).</li>
+            <li><b>تقارير أسبوعية تفاعلية:</b> استعراض تفاصيل الاستهلاك لكل يوم (من الإثنين للأحد) بضغطة زر.</li>
+            <li><b>استخراج تقارير PDF رسمية:</b> ملفات تنفيذية جاهزة للطباعة والمتابعة الإدارية.</li>
+            <li><b>إنذارات الصيانة التنبؤية:</b> كشف مبكر لاضطرابات الطاقة أو الحساسات المتعطلة.</li>
+          </ul>
+        </div>
+        <div>
+          <img class="preview" src="./Resources/3.jpeg" alt="Dashboard Preview">
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: NEW FEATURE - GROK AI CO-PILOT -->
+    <div class="slide">
+      <div class="badge" style="background: rgba(255,138,72,0.15); color: var(--accent-orange); border-color: var(--accent-orange);">🌟 NEW FEATURE (PLAN A)</div>
+      <h1>المساعد الذكي للمخزن: Grok AI Co-Pilot (xAI)</h1>
+      <div class="subtitle">تحويل نظام الإضاءة لمنظومة تفاعلية تتحدث وتتحكم وتكتشف الأعطال بالذكاء الاصطناعي التوليدي</div>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: var(--accent-green);">
+          <h3>🗣️ التخاطب باللغة الطبيعية</h3>
+          <ul>
+            <li>المدير يتحدث مع المخزن صوتياً أو نصياً بالعربية أو الإنجليزية.</li>
+            <li>سؤال تحليلي: <i>"يا جروك وفرنا كام كهرباء الأسبوع ده؟"</i>.</li>
+            <li>Grok يحلل البيانات ويجيب فوراً: <i>"وفرتم 59 كيلوواط بنسبة تحسن 68%"</i>.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">⚡ تحكم ميداني بالهاردوير (Tools)</h3>
+          <ul>
+            <li>Grok يستدعي دوال التحكم في الأردوينو مباشرة (Function Calling).</li>
+            <li>أمر فوري: <i>"اطفي ممر 1 للصيانة حالاً"</i>.</li>
+            <li><b>اللمبة تنطفئ في النموذج المصغر فورياً أمام لجنة التحكيم!</b></li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">🧠 التشخيص الاستباقي للأعطال</h3>
+          <ul>
+            <li>تحليل شذوذ الاستهلاك: <i>"ليه ممر 2 استهلاكه عالي الأسبوع ده؟"</i>.</li>
+            <li>Grok يكشف السبب: <i>"حساس ممر 2 يسجل حركة مستمرة، ننصح بفحص مهلة السكون"</i>.</li>
+            <li>تقديم حلول وإجراءات صيانة وقائية للمشرف.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: RESULTS & DATA ANALYSIS -->
+    <div class="slide">
+      <div class="badge">📊 PROVEN RESULTS</div>
+      <h1>نتائج الاختبارات والتحليل الرقمي (4 أسابيع)</h1>
+      <div class="subtitle">أرقام قياسية موثقة تثبت جدوى النظام وسرعة استجابته الميدانية</div>
+      
+      <div class="grid-3">
+        <div class="card" style="text-align: center; border-color: var(--accent-green);">
+          <div class="stat-number">65% - 70%</div>
+          <div class="stat-title">الوفر الإجمالي الأسبوعي</div>
+          <div class="stat-desc">في فاتورة الكهرباء مقارنة بالنظام التقليدي.</div>
+        </div>
+        <div class="card" style="text-align: center; border-color: var(--accent-cyan);">
+          <div class="stat-number" style="color: var(--accent-cyan);">80%</div>
+          <div class="stat-title">وفر ساعات السكون والليل</div>
+          <div class="stat-desc">خلال العمل بوضع الاستعداد الآمن 20%.</div>
+        </div>
+        <div class="card" style="text-align: center; border-color: var(--accent-orange);">
+          <div class="stat-number" style="color: var(--accent-orange);">40% - 60%</div>
+          <div class="stat-title">وفر إضافي بالنهار</div>
+          <div class="stat-desc">بفضل استغلال ضوء الشمس الطبيعي عبر LDR.</div>
+        </div>
+        <div class="card" style="text-align: center; border-color: var(--accent-purple);">
+          <div class="stat-number" style="color: var(--accent-purple);">2 - 3 ثوانٍ</div>
+          <div class="stat-title">سرعة استجابة الدخول</div>
+          <div class="stat-desc">سرعة رفع الإضاءة لـ 100% فور دخول العامل.</div>
+        </div>
+        <div class="card" style="text-align: center; border-color: #ec4899;">
+          <div class="stat-number" style="color: #ec4899;">96.4%</div>
+          <div class="stat-title">دقة استشعار الحركة</div>
+          <div class="stat-desc">نسبة إنذار خاطئ أقل من 3% في بيئة العمل.</div>
+        </div>
+        <div class="card" style="text-align: center; border-color: #0ea5e9;">
+          <div class="stat-number" style="color: #0ea5e9;">15 - 20 سنة</div>
+          <div class="stat-title">مضاعفة عمر المصابيح</div>
+          <div class="stat-desc">بفضل التعتيم السلس وتجنب دورات الإطفاء الصفرية.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: BUSINESS MODEL CANVAS -->
+    <div class="slide">
+      <div class="badge">💼 BUSINESS MODEL</div>
+      <h1>دراسة الجدوى ونموذج العمل التجاري (BMC)</h1>
+      <div class="subtitle">تحويل الفكرة الهندسية إلى منتج صناعي وتجاري مستدام في السوق</div>
+      
+      <div class="grid-3">
+        <div class="card" style="border-color: var(--accent-green);">
+          <h3>💎 القيمة المضافة (Value Props)</h3>
+          <ul>
+            <li>وفر 65-70% موثق في فاتورة الكهرباء.</li>
+            <li>مساعد ذكي Grok AI للتحكم والتشخيص الفوري.</li>
+            <li>صفر تغيير في روتين أو طريقة عمل العمال.</li>
+            <li>مضاعفة العمر الافتراضي للمصابيح وخفض تكلفة الصيانة.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-cyan);">
+          <h3 style="color: var(--accent-cyan);">🎯 شرائح العملاء المستهدفة</h3>
+          <ul>
+            <li><b>فئة (أ):</b> المخازن ومراكز التوزيع اللوجستية الضخمة.</li>
+            <li><b>فئة (ب):</b> المصانع ومستودعات التخزين المتوسطة والصغيرة.</li>
+            <li>مستودعات التبريد والتجميد (Cold Storage).</li>
+            <li>سلاسل التجزئة ومخازن الهايبر ماركت الكبرى.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: var(--accent-orange);">
+          <h3 style="color: var(--accent-orange);">💰 مصادر الإيرادات (Revenues)</h3>
+          <ul>
+            <li>رسوم توريد وتركيب أجهزة التحكم الأولية.</li>
+            <li>اشتراكات سنوية في برمجيات المنصة السحابية (SaaS).</li>
+            <li>عقود الصيانة والدعم الفني السنوية (SLA).</li>
+            <li>نموذج المشاركة في الوفر المحقق (% من الوفر).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: SDGS & ROADMAP -->
+    <div class="slide">
+      <div class="badge">🌍 SDGS & ROADMAP</div>
+      <h1>أهداف التنمية المستدامة وخريطة الطريق المستقبلية</h1>
+      <div class="subtitle">التوسع الصناعي المستقبلي والالتزام بالمعايير العالمية للطاقة النظيفة</div>
+      
+      <div class="rule-box" style="border-right-color: var(--accent-green);">
+        <div><b style="color: var(--accent-green);">الأولوية لمستودعات التبريد (Cold Storage Priority):</b> البدء بمخازن التبريد لأن حرارة المصابيح تزيد حمل أجهزة التبريد، مما يحقق وفراً مزدوجاً.</div>
+        <div class="rule-badge" style="background: rgba(0,230,118,0.15); color: var(--accent-green);">وفر مزدوج</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-cyan);">
+        <div><b style="color: var(--accent-cyan);">التكامل مع أنظمة الـ WMS / ERP:</b> ربط الحساسات بجداول وصول الشاحنات لإضاءة الممرات استباقياً قبل وصول عمال التفريغ.</div>
+        <div class="rule-badge" style="background: rgba(0,210,255,0.15); color: var(--accent-cyan);">تكامل لوجستي</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-orange);">
+        <div><b style="color: var(--accent-orange);">خوارزميات التعلم الآلي لضبط المهلة (AI Tuning):</b> تحليل كثافة الحركة لتعديل وقت السكون آلياً لكل ممر بناءً على نشاطه الفعلي.</div>
+        <div class="rule-badge" style="background: rgba(255,138,72,0.15); color: var(--accent-orange);">AI Tuning</div>
+      </div>
+      <div class="rule-box" style="border-right-color: var(--accent-purple);">
+        <div><b style="color: var(--accent-purple);">أهداف الأمم المتحدة للتنمية المستدامة (UN SDGs):</b> تحقيق الأهداف 8 (العمل اللائق)، 9 (الصناعة والابتكار)، 12 (الاستهلاك المسؤول)، و17 (الشراكات).</div>
+        <div class="rule-badge" style="background: rgba(186,104,255,0.15); color: var(--accent-purple);">SDGs 8, 9, 12, 17</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: CONCLUSION & LIVE DEMO -->
+    <div class="slide">
+      <div class="badge" style="font-size: 16px; padding: 10px 22px;">🎬 LIVE DEMO</div>
+      <h1 style="font-size: 46px;">Energix: قيادة مستقبل كفاءة الطاقة في المخازن</h1>
+      <div class="subtitle" style="font-size: 24px;">نظام متكامل يجمع بين كفاءة الطاقة الموثقة، وأمان العاملين، وقوة الذكاء الاصطناعي التوليدي</div>
+      
+      <div class="card" style="margin-top: 30px; border-color: var(--accent-green); padding: 30px; display: flex; gap: 30px; align-items: center;">
+        <div style="flex: 1.3;">
+          <h3 style="font-size: 24px; color: var(--accent-green); margin-bottom: 15px;">🚀 استعراض العرض الحي المباشر (Interactive Live Demo)</h3>
+          <ul style="font-size: 17px; line-height: 2;">
+            <li><b>1. النموذج الفيزيائي المصغر:</b> اختبار رفع النور الفوري لـ 100%، التعتيم الانسيابي PWM، وتفعيل وضع الـ 20% Standby.</li>
+            <li><b>2. لوحة التحكم السحابية:</b> استعراض تتبع الطاقة لايف، وتصنيف المنشآت الـ 12، وتوليد التقارير اللحظية.</li>
+            <li><b>3. التخاطب الحي مع Energix AI:</b> توجيه سؤال تحليلي عن التوفير، وإصدار أمر تحكم بالممرات مباشرة عبر الهاتف!</li>
+          </ul>
+        </div>
+        <div style="flex: 0.9; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; padding: 20px;">
+          <div style="font-size: 15px; font-weight: bold; color: var(--accent-green); margin-bottom: 10px;">📱 امسح بكاميرا الهاتف لتجربة التحكم:</div>
+          <img src="qr_telegram.png" alt="Telegram QR" style="width: 170px; height: 170px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1); background: #fff; padding: 6px;">
+          <div style="margin-top: 8px; font-size: 13px; color: #94A3B8;">
+            🔒 نظام مؤمن — رمز المشغل (PIN): <b style="color: #fff; background: rgba(16,185,129,0.25); padding: 2px 8px; border-radius: 4px; font-family: monospace;">2026</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM CONTROLS -->
+  <div class="controls">
+    <button class="btn" onclick="prevSlide()">السابق ◀</button>
+    <div class="counter" id="slide-counter">الشريحة 1 من 11</div>
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ شاشة كاملة (F11)</button>
+      <button class="btn" onclick="nextSlide()">التالي ▶</button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slide-counter');
+    const progressBar = document.getElementById('progress-bar');
+
+    function updateSlide() {
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === currentSlide));
+      counter.innerText = `الشريحة ${currentSlide + 1} من ${slides.length}`;
+      const progressPercent = ((currentSlide + 1) / slides.length) * 100;
+      progressBar.style.width = progressPercent + '%';
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => alert(err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard Arrow Keys
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') prevSlide();
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') nextSlide();
+      if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    });
+  </script>
+</body>
+</html>

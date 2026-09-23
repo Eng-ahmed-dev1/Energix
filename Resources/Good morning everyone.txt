@@ -1,0 +1,33 @@
+Good morning everyone. Today, we are going to present our project, explain its main idea, the problem it solves, and how it works. First, my teammate Malak will introduce the problem we identified.
+
+Malak:
+من اهم المشاكل اللى بتأثر على الميزانية هى الضوء اللى بيبقا شغال ف المخازن على مدار ال 24 ساعة و دا بيزود التكلفة المالية على ال هايبر ماركت او اى شركة ليها مخازن و دلوقتى صهيب هيقولنا الحل بتاعها.
+
+Sohaip:
+الحل هو Energy Saver، ودا بروجيكت integration بين software و hardware أو بمعنى أدق IoT project. وظيفته إنه يقلل الخسائر المالية الناتجة عن الإضاءة اللى بتفضل شغالة فى المخازن 24 ساعة بدون استخدام.
+
+لما مفيش حركة، الضوء بينخفض لـ 20%، ولما يلاقى حركة فى مربع معين بيشغل الإضاءة الخاصة بالمربع دا 100% مع تقليل الإضاءة فى باقى الأماكن.
+
+كمان النظام بيقلل الإضاءة حسب قوة ضوء الشمس، ولو حصلت حالة طوارئ زى حريق، بيتم تشغيل نور المخزن بالكامل لأسباب الأمان. ودلوقتى بلال هيشرح ال software prototype.
+
+Belal:
+احنا عملنا website simulation عشان نحاكى الداتا اللى الـ IoT هيبعتها للويب ونحولها لـ visualization.
+
+هيكون عندنا dashboard فيها كل الـ inventories ونقدر نعمل monitor ليها، وكمان نحدد inventory معينة ونعمل extract للتقارير كـ PDF. ودا هيساعدنا نلاحظ أى inventory استهلاكها أعلى من غيرها.
+
+وده هيقلل الـ cost بشكل ملحوظ، ودلوقتى أحمد هيشرح الـ Value Propositions بالتفصيل.
+
+Ahmed:
+هنا هشرح أهم الـ Value Propositions فى المشروع.
+
+1- Executable Reports:
+الـ inventory managers يقدروا يعملوا weekly reports عشان يتابعوا استهلاك الطاقة ويعرفوا كمية الاستهلاك والتوفير.
+
+2- Cost Efficiency:
+النظام ممكن يوفر من 65% لـ 70% من استهلاك الكهرباء فى المخازن، ودا هيساعد الشركات اللى عندها warehouses كبيرة إنها توفر فلوس وتستثمرها فى حاجات تانية.
+
+3- Extends Bulb Lifespan:
+لما ميبقاش فيه حركة، الإضاءة بتقل بدل ما تفضل شغالة بالكامل، ودا بيقلل تلف اللمبات ويزود عمرها الافتراضى وبيقلل تكلفة الصيانة والتغيير.
+
+Yousef:
+This is the end of our presentation. We hope you enjoyed our project and liked our idea. Thank you for listening.

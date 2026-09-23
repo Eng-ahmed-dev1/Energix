@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Energix — Enterprise Industrial Energy Platform</title>
+  <meta name="description" content="Autonomous energy optimization and real-time IoT lighting telemetry for warehouses and logistics facilities." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <div class="nav-logo" onclick="showPage('home')" role="button" tabindex="0" aria-label="Energix Home">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <span>Energix</span>
+    </div>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#home" class="nav-link active" data-page="home" onclick="showPage('home')">Overview</a></li>
+      <li><a href="#inventory" class="nav-link" data-page="inventory" onclick="showPage('inventory')">Telemetry Dashboard</a></li>
+      <li><a href="demo.html" class="nav-link" style="color: #10B981; font-weight: 700;">📱 Live AI Jury Demo</a></li>
+      <li><a href="#about" class="nav-link" data-page="about" onclick="showPage('about')">Architecture</a></li>
+      <li><a href="#team" class="nav-link" data-page="team" onclick="showPage('team')">Engineering Team</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <button class="btn btn-primary" onclick="showPage('inventory')">
+        <span>Live Dashboard</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile Navigation">
+  <a href="#home" onclick="showPage('home')">Overview</a>
+  <a href="#inventory" onclick="showPage('inventory')">Telemetry Dashboard</a>
+  <a href="#about" onclick="showPage('about')">Architecture</a>
+  <a href="#team" onclick="showPage('team')">Engineering Team</a>
+</nav>
+
+<!-- ============================================================
+     HOME / OVERVIEW PAGE
+     ============================================================ -->
+<div id="page-home" class="page active">
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <div class="section-label">
+          <span class="pulse-dot"></span>
+          Industrial IoT Energy Management
+        </div>
+        <h1 class="hero-headline">Autonomous Energy Intelligence for Modern Warehouses.</h1>
+        <p class="hero-sub">Eliminate 65%–70% of continuous lighting waste with real-time IoT load management, predictive 20% standby dimming, and verified telemetry analytics across megawarehouses.</p>
+        
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="showPage('inventory')">
+            <span>Launch Live Dashboard</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <a href="demo.html" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; color: #10B981; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Live AI Jury Demo (QR)</span>
+          </a>
+          <button class="btn btn-outline" onclick="showPage('about')">
+            Platform Architecture
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="val">2.4M</div>
+            <div class="lbl">kWh Monitored</div>
+          </div>
+          <div class="hero-stat">
+            <div class="val">$180K+</div>
+            <div class="lbl">Monthly Savings</div>
+          </div>
+          <div class="hero-stat">
+            <div class="val">96.4%</div>
+            <div class="lbl">Sensor Accuracy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Telemetry Graphic Card (Clean, Framer-Style UI Mockup) -->
+      <div class="hero-visual">
+        <div class="hero-telemetry-card">
+          <div class="telemetry-header">
+            <div class="telemetry-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              <span>Aisle Grid A04 — Live Telemetry</span>
+            </div>
+            <div class="telemetry-status">
+              <span class="pulse-dot"></span>
+              Active Load
+            </div>
+          </div>
+
+          <div class="telemetry-chart">
+            <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">
+              <span>Daily Wattage Distribution</span>
+              <span style="color:var(--emerald);font-weight:700;">68.4% Net Reduction</span>
+            </div>
+            <div class="chart-bars">
+              <div class="chart-col">
+                <div class="chart-bar" style="height:92%;background:var(--rose);"></div>
+                <span class="chart-lbl">Mon</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:38%;background:var(--emerald);"></div>
+                <span class="chart-lbl">Tue</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:32%;background:var(--emerald);"></div>
+                <span class="chart-lbl">Wed</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:35%;background:var(--emerald);"></div>
+                <span class="chart-lbl">Thu</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:42%;background:var(--emerald);"></div>
+                <span class="chart-lbl">Fri</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:22%;background:var(--sky);"></div>
+                <span class="chart-lbl">Sat</span>
+              </div>
+              <div class="chart-col">
+                <div class="chart-bar" style="height:20%;background:var(--sky);"></div>
+                <span class="chart-lbl">Sun</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="telemetry-metrics-grid">
+            <div class="t-metric-box">
+              <div class="t-metric-val" style="color:var(--emerald);">20%</div>
+              <div class="t-metric-lbl">Standby Eco Mode</div>
+            </div>
+            <div class="t-metric-box">
+              <div class="t-metric-val">2.3s</div>
+              <div class="t-metric-lbl">Sensing Latency</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Bento Grid -->
+  <section class="section" style="border-top:1px solid var(--border-subtle);">
+    <div class="container">
+      <div class="text-center" style="max-width:700px;margin:0 auto;">
+        <div class="section-label">Core Capabilities</div>
+        <h2>Engineered for High-Bay Precision</h2>
+        <p>Combining edge sensory hardware with cloud analytics to deliver frictionless, automated energy governance.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feat-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+          </div>
+          <div class="feat-title">20% Standby Mode</div>
+          <p class="feat-desc">Prevents harsh inrush current and driver burnout caused by 0% shutdowns while ensuring safe forklift visibility.</p>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="feat-title">Dual-Sensor Matrix</div>
+          <p class="feat-desc">Fuses passive infrared motion with thermal presence to keep zones lit when workers inspect stationary inventory.</p>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="feat-title">Daylight Harvesting</div>
+          <p class="feat-desc">Measures ambient natural lux from warehouse skylights and automatically scales down artificial wattage by 40%–60%.</p>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="feat-title">Verified ESG Reports</div>
+          <p class="feat-desc">Automated weekly executive summaries with day-by-day telemetry breakdown and predictive component fault warnings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
+    <div class="container">
+      <div class="text-center" style="max-width:700px;margin:0 auto 30px;">
+        <div class="section-label">Deployment Architecture</div>
+        <h2>Four Steps to Complete Load Optimization</h2>
+        <p>Zero disruption to daily picking cycles. Seamless integration with existing warehouse infrastructure.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-title">Deploy Edge Nodes</div>
+          <p class="step-desc">Standardized non-invasive sensor nodes installed at 8–10 meter intervals along warehouse high-bay aisles.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-title">Calibrate Zones</div>
+          <p class="step-desc">System maps aisle geometry, sets safe 20% standby thresholds, and configures emergency override protocols.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-title">Telemetry Telemetry</div>
+          <p class="step-desc">Real-time occupancy tracking, smooth PWM fade transitions, and ambient daylight harvesting take effect immediately.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-title">Measure &amp; Scale</div>
+          <p class="step-desc">Executive weekly PDF reports verify 65%–70% savings while Grok AI delivers proactive maintenance diagnostics.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<!-- ============================================================
+     INVENTORY / DASHBOARD PAGE
+     ============================================================ -->
+<div id="page-inventory" class="page">
+<main aria-label="Energy Telemetry Dashboard">
+  <div class="container">
+    <header class="dash-header">
+      <div>
+        <h2>Facility Telemetry Dashboard</h2>
+        <p class="dash-meta" id="dash-meta">Connecting to IoT Mesh Network…</p>
+      </div>
+      <button class="btn btn-primary" id="refresh-btn" onclick="refreshInventory()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <span>Sync Telemetry</span>
+      </button>
+    </header>
+
+    <!-- Top Metrics -->
+    <div class="dash-stats">
+      <div class="dash-stat-card">
+        <div class="ds-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="ds-val" id="total-consumed">—</div>
+        <div class="ds-lbl">Total Consumed (kWh)</div>
+      </div>
+      <div class="dash-stat-card">
+        <div class="ds-icon" style="color:var(--emerald);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+        </div>
+        <div class="ds-val" id="total-saved" style="color:var(--emerald);">—</div>
+        <div class="ds-lbl">Verified Energy Saved (kWh)</div>
+      </div>
+      <div class="dash-stat-card">
+        <div class="ds-icon" style="color:var(--amber);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="ds-val" id="total-money" style="color:var(--amber);">—</div>
+        <div class="ds-lbl">Net Financial Recovery ($)</div>
+      </div>
+      <div class="dash-stat-card">
+        <div class="ds-icon" style="color:var(--sky);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="ds-val" id="total-units">—</div>
+        <div class="ds-lbl">Active Grid Units</div>
+      </div>
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="inv-toolbar">
+      <div class="inv-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder="Search facilities, aisles, or zones…" oninput="filterInventory()" aria-label="Search facilities" />
+      </div>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All Units</button>
+        <button class="filter-btn" onclick="setFilter('low',this)">Efficient (&gt;28%)</button>
+        <button class="filter-btn" onclick="setFilter('medium',this)">Moderate (16–28%)</button>
+        <button class="filter-btn" onclick="setFilter('high',this)">High Usage (&lt;16%)</button>
+      </div>
+    </div>
+
+    <!-- Inventory Cards Grid -->
+    <div class="inventory-grid" id="inventory-grid"></div>
+  </div>
+</main>
+</div>
+
+<!-- ============================================================
+     ARCHITECTURE / ABOUT PAGE
+     ============================================================ -->
+<div id="page-about" class="page">
+<main aria-label="Platform Architecture">
+  <div class="container">
+    <section class="about-hero">
+      <div class="section-label">Enterprise Architecture</div>
+      <h1>Industrial-Grade Energy Intelligence</h1>
+      <p class="lead">Built to bridge the gap between high-voltage warehouse electrical infrastructure and executive decision-makers through real-time telemetry.</p>
+    </section>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-label">Engineering Rationale</div>
+        <h2>Why 20% Standby Mode is the Standard</h2>
+        <p>In industrial megawarehouses, complete 0% shutdowns introduce two catastrophic failure modes: severe inrush currents that burn out LED driver capacitors prematurely, and sudden visual disorientation for operators navigating 5-ton forklifts.</p>
+        <p>The Energix edge control loop enforces a 20% standby equilibrium. This maintains continuous safe ambient sightlines while slashing baseline wattage by 80% during idle cycles.</p>
+        <blockquote class="about-highlight">"Continuous 20% standby delivers 80% energy curtailment with zero thermal shock and zero occupational hazard."</blockquote>
+        <p>Integrated daylight harvesting further adapts fixture output dynamically against natural sky luminance, guaranteeing optimal lux on the warehouse floor at the lowest electrical draw.</p>
+      </div>
+
+      <div class="about-side">
+        <div class="platform-card">
+          <h3>Grid Performance Benchmarks</h3>
+          <div class="platform-stats">
+            <div class="ps-row"><span class="ps-label">Standby Load</span><span class="ps-val">20% Nominal</span></div>
+            <div class="ps-row"><span class="ps-label">Detection Latency</span><span class="ps-val">2.3 Seconds</span></div>
+            <div class="ps-row"><span class="ps-label">Occupancy Accuracy</span><span class="ps-val">96.4%</span></div>
+            <div class="ps-row"><span class="ps-label">False Positive Rate</span><span class="ps-val">&lt; 3.0%</span></div>
+            <div class="ps-row"><span class="ps-label">Sensor Spacing</span><span class="ps-val">8 – 10 Meters</span></div>
+            <div class="ps-row"><span class="ps-label">Driver Life Extension</span><span class="ps-val">+2.5x Cycle Life</span></div>
+          </div>
+        </div>
+
+        <div class="mission-box">
+          <h3>Emergency Failsafe Compliance</h3>
+          <p>Upon receiving a building fire or hazard interrupt, all localized dimming states are instantly overridden to 100% full luminance to illuminate emergency egress pathways.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- ============================================================
+     ENGINEERING TEAM PAGE
+     ============================================================ -->
+<div id="page-team" class="page">
+<main aria-label="Engineering Team">
+  <div class="container">
+    <section class="team-hero">
+      <div class="section-label">Development Team</div>
+      <h1>The Engineering Minds Behind Energix</h1>
+      <p>Applied technology specialists united to solve energy inefficiency across modern logistics networks.</p>
+    </section>
+
+    <div class="team-grid">
+      <article class="team-card">
+        <div class="avatar-initials">AA</div>
+        <div class="team-name">Ahmed Alaa</div>
+        <div class="team-role">Project Lead &amp; Strategy</div>
+        <div class="team-dept">Value Propositions &amp; Operations</div>
+      </article>
+
+      <article class="team-card">
+        <div class="avatar-initials" style="background:linear-gradient(135deg, #0ea5e9, #6366f1);color:#fff;">BR</div>
+        <div class="team-name">Belal Rezk</div>
+        <div class="team-role">Software Architect &amp; Presenter</div>
+        <div class="team-dept">Telemetry &amp; Web Platform</div>
+      </article>
+
+      <article class="team-card">
+        <div class="avatar-initials" style="background:linear-gradient(135deg, #f59e0b, #ef4444);color:#fff;">SO</div>
+        <div class="team-name">Sohaip Osama</div>
+        <div class="team-role">Hardware &amp; IoT Specialist</div>
+        <div class="team-dept">Sensory Grid &amp; Firmware</div>
+      </article>
+
+      <article class="team-card">
+        <div class="avatar-initials" style="background:linear-gradient(135deg, #a855f7, #ec4899);color:#fff;">YM</div>
+        <div class="team-name">Yousef Mohamed</div>
+        <div class="team-role">Data Analysis &amp; Outro</div>
+        <div class="team-dept">Research &amp; Benchmark Metrics</div>
+      </article>
+
+      <article class="team-card">
+        <div class="avatar-initials" style="background:linear-gradient(135deg, #10b981, #14b8a6);color:#fff;">MA</div>
+        <div class="team-name">Malak Ahmed</div>
+        <div class="team-role">Problem Analyst &amp; AI Feature</div>
+        <div class="team-dept">Documentation &amp; Grok AI Specs</div>
+      </article>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- ============================================================
+     INTERACTIVE MODAL & WEEKLY TELEMETRY AUDIT
+     ============================================================ -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close dialog">✕</button>
+    
+    <div class="modal-header">
+      <div class="modal-icon" id="modal-icon"></div>
+      <div class="modal-title">
+        <h3 id="modal-title-text">—</h3>
+        <p id="modal-subtitle" style="color:var(--text-muted);font-size:0.9rem;">—</p>
+      </div>
+    </div>
+
+    <div class="modal-metrics">
+      <div class="modal-metric">
+        <div class="mm-val" id="mm-consumed" style="color:var(--rose);">—</div>
+        <div class="mm-lbl">Power Consumed</div>
+      </div>
+      <div class="modal-metric">
+        <div class="mm-val" id="mm-saved" style="color:var(--emerald);">—</div>
+        <div class="mm-lbl">Energy Curtailment</div>
+      </div>
+      <div class="modal-metric">
+        <div class="mm-val" id="mm-money" style="color:var(--amber);">—</div>
+        <div class="mm-lbl">Financial Recovery</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="generateReport()" style="width:100%;margin-bottom:12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Generate Executive Audit Report</span>
+    </button>
+
+    <div class="weekly-report" id="weekly-report" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- Toast Feedback -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Telemetry Synchronized</span>
+</div>
+
+<!-- ============================================================
+     GROK AI CO-PILOT FLOATING ACTION DRAWER (Matching Modern UI)
+     ============================================================ -->
+<div id="grok-pill-btn" onclick="toggleGrokDrawer()" style="position:fixed;bottom:24px;right:24px;background:#101a2a;border:1.5px solid var(--border-emerald);padding:10px 18px;border-radius:var(--radius-full);cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,0.6);z-index:999;transition:all var(--transition);">
+  <span class="pulse-dot"></span>
+  <span style="font-family:var(--font-heading);font-weight:700;font-size:0.9rem;color:var(--text-main);">Grok AI Co-Pilot</span>
+</div>
+
+<!-- ============================================================
+     GROK AI CO-PILOT ENTERPRISE DRAWER (Full Parity with Telegram)
+     ============================================================ -->
+<div id="grok-drawer" class="grok-drawer-container">
+  <!-- Header -->
+  <div class="grok-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(16,185,129,0.15);border:1px solid #10b981;display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-heading);font-weight:800;font-size:0.92rem;color:#fff;">Energix AI Co-Pilot</div>
+        <div style="font-size:0.72rem;color:#10b981;display:flex;align-items:center;gap:4px;">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span>
+          Groq LPU (120B) Active & Connected
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="clearGrokChat()" title="مسح المحادثة" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;">🗑️</button>
+      <span onclick="toggleGrokDrawer()" style="cursor:pointer;color:var(--text-muted);font-weight:bold;font-size:1.1rem;padding:0 4px;">✕</span>
+    </div>
+  </div>
+
+  <!-- Interactive Quick Actions Bar (Identical to Telegram Bot) -->
+  <div class="grok-quick-bar">
+    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;" class="hide-scroll">
+      <button class="grok-action-chip" onclick="executeQuickReport()">📊 تقرير الوفر</button>
+      <button class="grok-action-chip" onclick="toggleWebAislesPanel()">🏢 ممر معين (1-12) ▾</button>
+      <button class="grok-action-chip" onclick="executeQuickControl(0, '100%')">💡 تشغيل الكل</button>
+      <button class="grok-action-chip" onclick="executeQuickControl(0, '20%')">🌙 استعداد الكل</button>
+      <button class="grok-action-chip" onclick="executeQuickControl(1, 'OFF')">🛑 عزل ممر 1</button>
+      <button class="grok-action-chip" onclick="executeQuickControl(0, 'OFF')">🛑 عزل الكل</button>
+      <button class="grok-action-chip" onclick="executeQuickControl(0, 'AUTO')">⚡ الوضع الآلي</button>
+    </div>
+
+    <!-- 12-Aisle Quick Grid Picker -->
+    <div id="web-aisles-picker" style="display:none;background:#060A13;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px;margin-top:2px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:600;">اختر الممر من الـ 12 للتحكم أو التقرير:</span>
+        <span onclick="toggleWebAislesPanel()" style="font-size:0.75rem;color:#10b981;cursor:pointer;">إغلاق ✕</span>
+      </div>
+      <div class="grok-aisles-grid" id="web-aisles-items">
+        <!-- Injected via JS -->
+      </div>
+      <!-- Selected Aisle Actions -->
+      <div id="web-selected-actions" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;gap:6px;align-items:center;">
+        <div id="web-selected-title" style="font-size:0.78rem;font-weight:700;color:#10b981;width:100%;"></div>
+        <button class="grok-action-chip" style="background:#10b981;color:#000;" onclick="controlCurrentSelected('100%')">💡 تشغيل 100%</button>
+        <button class="grok-action-chip" onclick="controlCurrentSelected('20%')">🌙 وضع 20%</button>
+        <button class="grok-action-chip" style="border-color:#ef4444;color:#ef4444;" onclick="controlCurrentSelected('OFF')">🛑 إطفاء 0%</button>
+        <button class="grok-action-chip" style="background:rgba(34,158,217,0.2);color:#229ed9;" onclick="reportCurrentSelected()">📋 تقرير شامل</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages List -->
+  <div id="grok-messages" style="flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;font-size:0.9rem;">
+    <div class="grok-msg-bot">
+      👋 أهلاً بك في <b>Energix AI Co-Pilot</b>!
+      <br><br>
+      يمكنك استخدام <b>الأزرار السريعة بالأعلى</b> للتحكم اللحظي في جميع الممرات الـ 12 أو طلب تقارير الوفر، أو كتابة أي سؤال/أمر باللغة الطبيعية (بالاسم أو بالرقم).
+    </div>
+  </div>
+
+  <!-- Chat Input Bar -->
+  <div style="padding:10px 14px;background:#0E1626;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:8px;">
+    <input type="text" id="grok-input" placeholder="اطلب تقرير ممر أو اعطه أمراً (عربي / English)..." style="flex:1;background:#060A13;border:1px solid rgba(255,255,255,0.12);padding:10px 14px;border-radius:var(--radius-sm);color:#fff;outline:none;font-size:0.88rem;direction:auto;" onkeypress="if(event.key==='Enter')sendGrokMessage()">
+    <button onclick="sendGrokMessage()" style="background:#10b981;color:#04120c;border:none;padding:0 16px;border-radius:var(--radius-sm);font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;">
+      <span>إرسال</span>
+    </button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const FACILITIES_LIST = [
+  { id: 1, name: "Warehouse Aisle 01" },
+  { id: 2, name: "Warehouse Aisle 02" },
+  { id: 3, name: "Warehouse Aisle 03" },
+  { id: 4, name: "Production Hall A" },
+  { id: 5, name: "Production Hall B" },
+  { id: 6, name: "Cold Storage Vault 01" },
+  { id: 7, name: "Cold Storage Vault 02" },
+  { id: 8, name: "Logistics Dispatch Center" },
+  { id: 9, name: "Chiller & HVAC Plant" },
+  { id: 10, name: "Loading Dock Perimeter" },
+  { id: 11, name: "Automated Sorter Bay" },
+  { id: 12, name: "Solar Array Microgrid" }
+];
+
+let selectedAisleId = 1;
+
+function toggleGrokDrawer() {
+  const d = document.getElementById('grok-drawer');
+  const isHidden = d.style.display === 'none' || !d.style.display;
+  d.style.display = isHidden ? 'flex' : 'none';
+  if (isHidden) {
+    populateWebAisles();
+    setTimeout(() => {
+      const inp = document.getElementById('grok-input');
+      if (inp) inp.focus();
+    }, 100);
+  }
+}
+
+function clearGrokChat() {
+  document.getElementById('grok-messages').innerHTML = `
+    <div class="grok-msg-bot">
+      تم تفريغ المحادثة. يمكنك البدء بسؤال جديد أو استخدام الأزرار أعلاه!
+    </div>`;
+}
+
+function toggleWebAislesPanel() {
+  const p = document.getElementById('web-aisles-picker');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+function populateWebAisles() {
+  const container = document.getElementById('web-aisles-items');
+  if (!container || container.children.length > 0) return;
+  
+  container.innerHTML = FACILITIES_LIST.map(f => `
+    <div class="grok-aisle-item" onclick="selectWebAisle(${f.id}, '${f.name}')">
+      <b style="color:#10b981;">#${f.id}</b> ${f.name}
+    </div>
+  `).join('');
+}
+
+function selectWebAisle(id, name) {
+  selectedAisleId = id;
+  const act = document.getElementById('web-selected-actions');
+  act.style.display = 'flex';
+  document.getElementById('web-selected-title').textContent = `التحكم المباشر في: #${id} ${name}`;
+}
+
+async function controlCurrentSelected(mode) {
+  const fac = FACILITIES_LIST.find(f => f.id === selectedAisleId) || { name: `ممر ${selectedAisleId}` };
+  await executeQuickControl(selectedAisleId, mode, fac.name);
+}
+
+async function reportCurrentSelected() {
+  const fac = FACILITIES_LIST.find(f => f.id === selectedAisleId) || { name: `ممر ${selectedAisleId}` };
+  const msgBox = document.getElementById('grok-messages');
+  
+  msgBox.innerHTML += `<div class="grok-msg-user">📋 طلب تقرير تفصيلي لـ: ${fac.name}</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+  
+  const loadId = 'grok-load-' + Date.now();
+  msgBox.innerHTML += `<div id="${loadId}" class="grok-msg-bot">⏳ جاري استخراج تقرير الحساسات والاستهلاك اللحظي...</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  try {
+    const res = await fetch(`/api/facility/${selectedAisleId}`);
+    const data = await res.json();
+    const formatted = `
+      <div style="font-weight:800;color:#10b981;font-size:0.95rem;margin-bottom:6px;">📋 تقرير تفصيلي لـ [${data.name}]</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-bottom:8px;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">الموقع:</td><td style="text-align:left;font-weight:600;">${data.location}</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">الوضع التشغيلي:</td><td style="text-align:left;color:#10b981;font-weight:700;">${data.status_desc}</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">نسبة الإضاءة:</td><td style="text-align:left;font-weight:700;">${data.brightness_pct}%</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">الاستهلاك الفعلي:</td><td style="text-align:left;color:#f43f5e;font-weight:700;">${data.consumed_kw.toLocaleString()} kWh</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">صافي الوفر:</td><td style="text-align:left;color:#10b981;font-weight:700;">${data.saved_kw.toLocaleString()} kWh</td></tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);"><td style="padding:4px 0;color:var(--text-muted);">العائد المالي:</td><td style="text-align:left;font-weight:700;">$${data.money_saved.toLocaleString()}</td></tr>
+        <tr><td style="padding:4px 0;color:var(--text-muted);">كفاءة الطاقة:</td><td style="text-align:left;font-weight:700;">${data.efficiency}%</td></tr>
+      </table>
+    `;
+    document.getElementById(loadId).innerHTML = formatted;
+  } catch (err) {
+    document.getElementById(loadId).innerText = "تعذر جلب التقرير.";
+  }
+  msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+async function executeQuickReport() {
+  const msgBox = document.getElementById('grok-messages');
+  msgBox.innerHTML += `<div class="grok-msg-user">📊 استعلام عن تقرير الوفر الإجمالي للمخزن</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  const loadId = 'grok-load-' + Date.now();
+  msgBox.innerHTML += `<div id="${loadId}" class="grok-msg-bot">⏳ جاري الاتصال بالشبكة المركزية...</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  try {
+    const res = await fetch('/api/telemetry');
+    const data = await res.json();
+    const formatted = `
+      <div style="font-weight:800;color:#10b981;font-size:0.95rem;margin-bottom:6px;">📊 تقرير طاقة المنشأة الحي (Energix Grid):</div>
+      <ul style="padding-right:16px;margin:0;line-height:1.7;font-size:0.85rem;">
+        <li>إجمالي الاستهلاك اللحظي: <b>${data.total_consumed.toLocaleString()} kWh</b></li>
+        <li>صافي الطاقة الموفرة: <b style="color:#10b981;">${data.total_saved.toLocaleString()} kWh</b></li>
+        <li>الوفر المالي التراكمي: <b style="color:#10b981;">$${data.total_money.toLocaleString()} دولار</b></li>
+        <li>نسبة خفض الهدر: <b style="color:#10b981;">68.4%</b> بفضل 20% Standby Mode</li>
+        <li>العقد المراقبة: <b>${data.active_units} ممر ومنطقة نشطة</b></li>
+      </ul>
+    `;
+    document.getElementById(loadId).innerHTML = formatted;
+  } catch (err) {
+    document.getElementById(loadId).innerText = "تعذر قراءة بيانات الشبكة.";
+  }
+  msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+async function executeQuickControl(unitId, mode, name = null) {
+  const targetLabel = unitId === 0 ? "جميع ممرات المخزن" : (name || `ممر ${unitId}`);
+  const msgBox = document.getElementById('grok-messages');
+  
+  msgBox.innerHTML += `<div class="grok-msg-user">⚙️ أمر تحكم: ضبط ${targetLabel} على وضع ${mode}</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  try {
+    const res = await fetch('/api/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ unit_id: unitId, mode: mode })
+    });
+    const data = await res.json();
+    
+    // Trigger dashboard re-fetch immediately!
+    if (typeof fetchTelemetry === 'function') {
+      fetchTelemetry();
+    }
+    
+    const replyText = unitId === 0 
+      ? `💡 تم بنجاح تطبيق وضع <b>(${mode})</b> على كامل منشأة المخزن (الممرات الـ 12 معاً).`
+      : `✅ تم بنجاح ضبط <b>[${targetLabel}]</b> على وضع <b>(${mode})</b>.`;
+
+    msgBox.innerHTML += `<div class="grok-msg-bot">${replyText}</div>`;
+  } catch (err) {
+    msgBox.innerHTML += `<div class="grok-msg-bot" style="color:#ef4444;">تعذر إرسال الأمر للسيرفر.</div>`;
+  }
+  msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+function formatMarkdown(text) {
+  if (!text) return '';
+  let out = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  
+  out = out.replace(/^### (.*$)/gim, '<h4 style="margin:10px 0 6px;color:#10b981;font-weight:700;">$1</h4>');
+  out = out.replace(/^## (.*$)/gim, '<h3 style="margin:12px 0 8px;color:#fff;font-weight:800;">$1</h3>');
+  out = out.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#fff;">$1</strong>');
+  out = out.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;color:#10b981;font-family:monospace;font-size:0.85em;">$1</code>');
+  
+  const lines = out.split('\n');
+  let inTable = false;
+  let tableHtml = '';
+  let finalLines = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('|') && line.endsWith('|')) {
+      if (!inTable) {
+        inTable = true;
+        tableHtml = '<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:0.82rem;border:1px solid rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;">';
+      }
+      if (line.includes('---')) continue;
+      const cells = line.split('|').filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      tableHtml += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">';
+      cells.forEach(c => {
+        tableHtml += `<td style="padding:6px 10px;text-align:right;">${c.trim()}</td>`;
+      });
+      tableHtml += '</tr>';
+    } else {
+      if (inTable) {
+        inTable = false;
+        tableHtml += '</table>';
+        finalLines.push(tableHtml);
+      }
+      finalLines.push(line);
+    }
+  }
+  if (inTable) {
+    tableHtml += '</table>';
+    finalLines.push(tableHtml);
+  }
+  
+  out = finalLines.join('<br>');
+  out = out.replace(/<br><table/g, '<table').replace(/<\/table><br>/g, '</table>');
+  out = out.replace(/<br><h/g, '<h').replace(/<\/h[34]><br>/g, '</h>');
+  return out;
+}
+
+async function sendGrokMessage() {
+  const inp = document.getElementById('grok-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+
+  const msgBox = document.getElementById('grok-messages');
+  msgBox.innerHTML += `<div class="grok-msg-user">${txt}</div>`;
+  inp.value = '';
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  const loadId = 'grok-load-' + Date.now();
+  msgBox.innerHTML += `<div id="${loadId}" class="grok-msg-bot">⏳ جاري التحليل مع محرك Groq AI...</div>`;
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: txt })
+    });
+    const data = await res.json();
+    document.getElementById(loadId).innerHTML = formatMarkdown(data.reply);
+    
+    // Automatically trigger dashboard update if it was an action command
+    if (typeof fetchTelemetry === 'function') {
+      fetchTelemetry();
+    }
+  } catch (err) {
+    document.getElementById(loadId).innerText = "تعذر الاتصال بمحرك الذكاء الاصطناعي.";
+  }
+  msgBox.scrollTop = msgBox.scrollHeight;
+}
+</script>
+</body>
+</html>

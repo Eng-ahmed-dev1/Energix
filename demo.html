@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Energix — منصة العرض التفاعلي للجنة (Live AI Jury Demo)</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cairo', 'Inter', -apple-system, sans-serif;
+      background: #080C14;
+      color: #E2E8F0;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .demo-header {
+      padding: 2.5rem 1.5rem 1.5rem;
+      text-align: center;
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 60%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10B981;
+      padding: 0.35rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .demo-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    .demo-sub {
+      color: #94A3B8;
+      max-width: 650px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    .demo-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 900px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .qr-card {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.25rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .qr-card.featured {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, #0F172A 100%);
+    }
+    .qr-card .top-tag {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #10B981;
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.65rem;
+      border-radius: 0.5rem;
+    }
+    .qr-box {
+      background: #FFFFFF;
+      padding: 1.25rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      margin: 1.5rem 0;
+      display: inline-block;
+    }
+    .qr-box img {
+      width: 220px;
+      height: 220px;
+      display: block;
+    }
+    .qr-platform {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+    }
+    .qr-desc {
+      color: #94A3B8;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+    .features-list {
+      text-align: right;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .features-list li {
+      font-size: 0.9rem;
+      color: #CBD5E1;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .features-list li:last-child {
+      margin-bottom: 0;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-tg {
+      background: #229ED9;
+      color: #FFF;
+    }
+    .btn-tg:hover {
+      background: #1B86BA;
+      transform: translateY(-2px);
+    }
+    .btn-wa {
+      background: #25D366;
+      color: #FFF;
+    }
+    .btn-wa:hover {
+      background: #1EBE5D;
+      transform: translateY(-2px);
+    }
+    .btn-web {
+      background: #10B981;
+      color: #000;
+    }
+    .btn-web:hover {
+      background: #059669;
+      color: #FFF;
+      transform: translateY(-2px);
+    }
+    .live-sim-panel {
+      max-width: 1200px;
+      margin: 1rem auto 3rem;
+      padding: 0 1.5rem;
+    }
+    .sim-card {
+      background: #0D1424;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+    }
+    .sim-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #CBD5E1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .chip:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10B981;
+      color: #10B981;
+    }
+    .chat-output-box {
+      background: #080C14;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      min-height: 100px;
+      font-size: 0.95rem;
+      color: #E2E8F0;
+      line-height: 1.6;
+    }
+    .back-nav {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .back-nav a {
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: 0.2s;
+    }
+    .back-nav a:hover {
+      color: #10B981;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="demo-header">
+    <div class="demo-badge">
+      <span style="display:inline-block; width:8px; height:8px; background:#10B981; border-radius:50%; box-shadow:0 0 8px #10B981;"></span>
+      عرض تقييم اللجنة المباشر · Live Prototype
+    </div>
+    <h1 class="demo-title">تفاعل مع المساعد الذكي لمخازن Energix</h1>
+    <p class="demo-sub">
+      امسح الـ QR بكاميرا هاتفك للتحكم المباشر في ممرات المخزن واستعراض تقارير خفض استهلاك الطاقة بنسبة 68.4%
+    </p>
+  </header>
+
+  <!-- Dual Showcase Cards -->
+  <div class="demo-container">
+
+    <!-- Card 1: Telegram Bot (Recommended) -->
+    <div class="qr-card featured">
+      <span class="top-tag">الأسرع والأكثر تفاعلاً ⭐</span>
+      <div class="qr-platform">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#229ED9"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        بوت التليجرام (Telegram AI Co-Pilot)
+      </div>
+      <p class="qr-desc">
+        يمنح اللجنة أزرار تحكم تفاعلية فورية ومحادثة طبيعية للتحكم في المخزن مباشرة.
+      </p>
+
+      <div class="qr-box">
+        <img id="qr-tg-img" src="qrcodes/qr_telegram.png" alt="Telegram Bot QR" />
+      </div>
+
+      <div style="margin: 10px 0 14px; background: rgba(16,185,129,0.08); border: 1px dashed rgba(16,185,129,0.4); border-radius: 8px; padding: 8px 12px; text-align: center;">
+        <span style="color: #10B981; font-weight: 700; font-size: 0.85rem;">🔒 نظام دخول مؤمن للمشرفين واللجنة</span>
+        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 3px;">
+          امسح الكود لفتح الصلاحية تلقائياً، أو استخدم الـ PIN: <code style="color: #fff; background: rgba(255,255,255,0.15); padding: 1px 6px; border-radius: 4px; font-weight: bold; letter-spacing: 1px;">2026</code>
+        </div>
+      </div>
+
+      <ul class="features-list">
+        <li>🛡️ مصادقة مشغلين معتمدة (Role-Based Operator Authentication)</li>
+        <li>✅ أزرار لمس سريعة: [تشغيل 100% · وضع 20% · إطفاء صيانة]</li>
+        <li>✅ استجابة فورية بدون تحميل أو انتظار</li>
+        <li>✅ يربط هاتفك بلوحة التحكم المركزية المعروضة على الشاشة</li>
+        <li>✅ يعمل محلياً من لابتوب العرض بدون الحاجة لسيرفرات سحابية</li>
+      </ul>
+
+      <a id="btn-tg-link" href="https://t.me/Energix_Co_Pilot_Bot?start=energix2026" target="_blank" class="btn-action btn-tg">
+        فتح في تليجرام (@Energix_Co_Pilot_Bot)
+      </a>
+    </div>
+
+    <!-- Card 2: Mobile Web Direct (Zero App Installation) -->
+    <div class="qr-card">
+      <div class="qr-platform">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#10B981"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+        متصفح الموبايل (Instant Web Chat)
+      </div>
+      <p class="qr-desc">
+        للأعضاء الذين لا يملكون تليجرام: يعمل بكاميرا الهاتف مباشرة دون أي برامج.
+      </p>
+
+      <div class="qr-box">
+        <img id="qr-web-img" src="qrcodes/qr_web.png" alt="Mobile Web QR" />
+      </div>
+
+      <ul class="features-list">
+        <li>✅ لا يتطلب أي تطبيق إضافي (يفتح في Safari أو Chrome)</li>
+        <li>✅ شات مباشر مدمج بذكاء Grok الاصطناعي</li>
+        <li>✅ مراقبة حية لبيانات الطاقة والتعتيم (Telemetry)</li>
+        <li>✅ مثالي لأي عضو لجنة لتجربة النظام في ثانية واحدة</li>
+      </ul>
+
+      <a id="btn-web-link" href="http://localhost:8000" target="_blank" class="btn-action btn-web">
+        فتح لوحة التحكم على الهاتف
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Live Simulation Test Box -->
+  <div class="live-sim-panel">
+    <div class="sim-card">
+      <div class="sim-title">
+        <span>🧪 تجربة حية على الشاشة (Live Simulation Tester)</span>
+        <span style="font-size:0.85rem; color:#10B981; font-weight:600;">● السيرفر متصل ويعمل</span>
+      </div>
+      <p style="color:#94A3B8; font-size:0.9rem; margin-bottom:1rem;">
+        يمكنك النقر على أحد الأوامر النموذجية أدناه لإظهار طريقة استجابة النظام للجنة فوراً:
+      </p>
+
+      <div class="quick-chips">
+        <button class="chip" onclick="simulateTest('اطفي إضاءة ممر 1 للصيانة')">🛑 "اطفي إضاءة ممر 1 للصيانة"</button>
+        <button class="chip" onclick="simulateTest('شغل إضاءة ممر 1 بنسبة 100%')">💡 "شغل إضاءة ممر 1 بنسبة 100%"</button>
+        <button class="chip" onclick="simulateTest('كام وفرنا النهاردة من الطاقة؟')">📊 "كام وفرنا النهاردة من الطاقة؟"</button>
+        <button class="chip" onclick="simulateTest('اضبط جميع ممرات المخزن على وضع 20%')">🌙 "اضبط جميع ممرات المخزن على وضع 20%"</button>
+      </div>
+
+      <div class="chat-output-box" id="sim-output">
+        👉 اضغط على أحد الأوامر أعلاه لتجربة رد الذكاء الاصطناعي وتأثيره الفوري على لوحة التحكم...
+      </div>
+    </div>
+  </div>
+
+  <div class="back-nav">
+    <a href="index.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      العودة إلى لوحة تحكم المخزن الرئيسية (Main Dashboard)
+    </a>
+  </div>
+
+  <script>
+    async function simulateTest(query) {
+      const box = document.getElementById('sim-output');
+      box.innerHTML = `<span style="color:#94A3B8;">⏳ جاري إرسال الأمر للذكاء الاصطناعي وتنفيذ التعتيم...</span>`;
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: query })
+        });
+        const data = await res.json();
+        box.innerHTML = `
+          <div style="color:#10B981; font-weight:700; margin-bottom:0.25rem;">أمر اللجنة: "${query}"</div>
+          <div style="color:#FFFFFF;">رد المساعد الذكي: ${data.reply}</div>
+        `;
+      } catch (e) {
+        box.innerHTML = `<span style="color:#EF4444;">تعذر الاتصال بالسيرفر المحلي: ${e.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
