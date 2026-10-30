@@ -17,23 +17,14 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-:: 2. تثبيت وتحديث جميع المكتبات من requirements.txt مع إظهار التفاصيل
-echo [1/3] جاري فحص وتثبيت كافة المكتبات المطلوبة من requirements.txt...
-echo ------------------------------------------------------------
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-echo ------------------------------------------------------------
-echo [✓] تم التأكد من تثبيت جميع المكاتب بنجاح!
-echo.
-
-:: 3. تشغيل السيرفر
-echo [2/3] جاري تشغيل سيرفر الويب والذكاء الاصطناعي (Port 8000)...
+:: 2. تشغيل السيرفر
+echo [1/2] جاري تشغيل سيرفر الويب والذكاء الاصطناعي (Port 8000)...
 start "Energix Server (Port 8000)" cmd /k "python server.py"
 
 timeout /t 2 >nul
 
-:: 4. تشغيل بوت التليجرام
-echo [3/3] جاري تشغيل بوت التليجرام (@Energix_Co_Pilot_Bot)...
+:: 3. تشغيل بوت التليجرام
+echo [2/2] جاري تشغيل بوت التليجرام (@Energix_Co_Pilot_Bot)...
 start "Energix Telegram Bot" cmd /k "python telegram_bot.py"
 
 timeout /t 2 >nul
