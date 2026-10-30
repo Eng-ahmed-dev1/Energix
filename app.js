@@ -96,9 +96,10 @@ async function fetchTelemetry() {
 
 function startPolling() {
   if (!pollingInterval) {
-    pollingInterval = setInterval(fetchTelemetry, 2000);
+    pollingInterval = setInterval(fetchTelemetry, 500); // تحديث لحظي كل نصف ثانية (500ms)
   }
 }
+
 
 function stopPolling() {
   if (pollingInterval) {
