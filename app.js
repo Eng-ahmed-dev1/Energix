@@ -189,9 +189,21 @@ function renderInventory(items) {
   if (!grid) return;
 
   if (!items || !items.length) {
-    grid.innerHTML = `<div style="color:var(--text-muted);padding:60px 0;grid-column:1/-1;text-align:center;"><p>No aisle data available.</p></div>`;
+    grid.innerHTML = `
+      <div style="color:var(--text-muted);padding:50px 20px;grid-column:1/-1;text-align:center;background:rgba(255,255,255,0.02);border:1px dashed var(--border-subtle);border-radius:var(--radius-md);">
+        <div style="font-size:2.4rem;margin-bottom:12px;">🔌</div>
+        <h3 style="color:#f8fafc;margin-bottom:6px;font-size:1.15rem;">في انتظار توصيل الأردوينو لاكتشاف الممرات (Auto-Detect)...</h3>
+        <p style="font-size:0.88rem;color:var(--text-muted);max-width:500px;margin:0 auto 16px;">
+          قم بتوصيل كابل الـ USB الخاص بالأردوينو باللابتوب. سيتعرف النظام عليه تلقائياً، ويكتشف عدد الممرات الحقيقية المتصلة ويبني شاشات المراقبة فورياً دون أي تدخل منك!
+        </p>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:20px;font-size:0.82rem;font-weight:600;">
+          <span style="width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block;animation:pulse 1.5s infinite;"></span>
+          Auto-Discovery Listening Mode Active
+        </div>
+      </div>`;
     return;
   }
+
 
   grid.innerHTML = items.map(item => {
     const occupied   = item.motion;
@@ -617,31 +629,11 @@ function generateReport() {
    FALLBACK MOCK GENERATOR (When server.py is offline)
    ============================================================ */
 function generateFallbackData() {
-  const types = [
-    { name: 'Warehouse Aisle 01 (Prototype Node)', loc: 'Zone 1 · Main Bay' },
-    { name: 'Warehouse Aisle 02', loc: 'Zone 1 · High-Bay' },
-    { name: 'Production Hall A', loc: 'Block A · Assembly' },
-    { name: 'Cold Storage Vault 01', loc: 'Freezer (-18°C)' },
-    { name: 'Chiller & HVAC Plant', loc: 'Rooftop Plant A' },
-    { name: 'Solar Array Substation', loc: 'Carport Canopy' }
-  ];
-  
-  inventoryData = types.map((t, idx) => ({
-    id: idx + 1,
-    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7l9-4 9 4v14H3V7zm4 4h4v6H7v-6zm6 0h4v6h-4v-6z"/></svg>`,
-    name: t.name,
-    location: t.loc,
-    consumed: 1200 + idx * 150,
-    saved: 450 + idx * 60,
-    money: 65 + idx * 12,
-    eff: 35,
-    status: 'low',
-    is_hardware: idx === 0
-  }));
-  
+  inventoryData = [];
   renderInventory(inventoryData);
-  updateTopStats(7800, 2600, 380, inventoryData.length);
+  updateTopStats(0, 0, 0, 0);
 }
+
 
 /* ============================================================
    TOAST NOTIFICATION

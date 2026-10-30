@@ -86,14 +86,12 @@ class ArduinoManager:
         self.lock = threading.Lock()
         self.warehouse_handshake = False
 
-        # Dynamic Aisle Registry: discovered from Arduino telemetry or handshake
-        self.aisle_count = 2
-        self.aisles: Dict[int, Dict[str, Any]] = {
-            1: {"id": 1, "name": "Warehouse Aisle 01", "location": "Warehouse 01 · Left Corridor",  "base_kw": 1050, "dim": 20, "mode": "20% Standby", "motion": False, "last_seen": time.time()},
-            2: {"id": 2, "name": "Warehouse Aisle 02", "location": "Warehouse 01 · Right Corridor", "base_kw": 980,  "dim": 20, "mode": "20% Standby", "motion": False, "last_seen": time.time()},
-        }
-        self.lux = 350
+        # Dynamic Aisle Registry: discovered ONLY when Arduino is connected
+        self.aisle_count = 0
+        self.aisles: Dict[int, Dict[str, Any]] = {}
+        self.lux = 0
         self.last_connected_alert = False
+
 
     def find_and_connect(self):
         ports = serial.tools.list_ports.comports()
@@ -160,10 +158,14 @@ class ArduinoManager:
                 self.is_connected = False
                 self.warehouse_handshake = False
                 self.last_connected_alert = False
+                with self.lock:
+                    self.aisles.clear()
+                    self.aisle_count = 0
                 if self.ser:
                     try: self.ser.close()
                     except: pass
                 self.ser = None
+
 
     def _parse_line(self, line: str):
         # ── 1. Dynamic Handshake detection ──
