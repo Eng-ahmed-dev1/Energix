@@ -1,145 +1,276 @@
-/*
- * ============================================================
- * Energix Firmware v2.1 — Dynamic Multi-Aisle Smart Warehouse
- * Hardware: Arduino Uno / Nano (Controls Prototype Aisles)
- * Features: Dynamic Aisle Auto-Discovery, 20% Standby, 100% Active,
- *           LDR Daylight Harvesting, Smooth PWM Fading,
- *           Dynamic JSON Telemetry, Targeted & All-Aisle Serial Commands
- * ============================================================
- */
+// ===== البنات =====
+const int corridors = 2;
+int pirPins[corridors] = {A0, A1};
+int pwmPins[corridors] = {3, 9};   // ممر 1: أول 4 ليدات (موسفت) | ممر 2: كله
+int ldrPins[corridors] = {A2, A3};
+const int tailPin = 5;             // ممر 1: الـ 4 التانيين (ترانزستور)
+const int trigPin = 7;
+const int echoPin = 8;
+int buttonPin = 2;
+int buzzerPin = 4;
 
-// ============================================================
-// SYSTEM IDENTIFIERS (Dynamic Metadata)
-// ============================================================
-const int WAREHOUSE_ID = 1;
-const int AISLE_COUNT  = 2; // عدد الممرات المدارة بهذا الأردوينو
+// ===== الإعدادات =====
+const int levels[] = {255, 178, 115, 51};
+const int levelCount = 4;
+const int inactiveBrightness = 0;
+const int daylightBrightness = 0;
+const int ecoMax = 51;             // 20% من 255
 
-// ============================================================
-// AISLE 1 PINOUT
-// ============================================================
-const int PIR1_PIN = 2;    // حساس حركة الممر الأول
-const int LED1_PIN = 9;    // إضاءة الممر الأول (PWM)
+const int dayOn = 800;
+const int dayOff = 700;
+const bool debug = false;          // false لضمان إرسال JSON نقي للسيرفر
+const bool debugHand = false;
 
-// ============================================================
-// AISLE 2 PINOUT
-// ============================================================
-const int PIR2_PIN = 3;    // حساس حركة الممر الثاني
-const int LED2_PIN = 10;   // إضاءة الممر الثاني (PWM)
+// فلترة الحركة (للتكييف)
+const unsigned long pirConfirmMs = 300;
 
-// ============================================================
-// SHARED SENSORS — سقف المخزن
-// ============================================================
-const int LDR_PIN  = A0;   // حساس ضوء النهار (Daylight Harvesting)
+// إشارة الإيد
+const int handMaxCm = 30;
+const int handTolerance = 3;
+const unsigned long handHold = 5000;
+const unsigned long usInterval = 80;
 
-// ============================================================
-// BRIGHTNESS PWM CONSTANTS (0 - 255)
-// ============================================================
-const int BRIGHT_100 = 255;   // 100% وضع الحركة والتحميل الكامل
-const int BRIGHT_20  = 51;    // 20% وضع الاستعداد الآمن الاقتصادي
-const int BRIGHT_OFF = 0;     // 0% إطفاء وعزل تام للصيانة
+const unsigned long holdTime = 8000;
+const unsigned long levelTime = 3000;
+const unsigned long fadeSlow = 20;
+const unsigned long fadeFast = 1;
+const unsigned long fadeEco = 30;
+const unsigned long graceTime = 4000;
 
-// ============================================================
-// TIMEOUT — مهلة السكون قبل خفض الإضاءة
-// ============================================================
-const unsigned long TIMEOUT_MS = 10000; // 10 ثوانٍ للتجربة المعملية
+// ===== المتغيرات =====
+int mode = 0;
+bool lastButtonState = HIGH;
+unsigned long lastButtonTime = 0;
+unsigned long ignoreUntil = 0;
+unsigned long lastPrint = 0;
+unsigned long lastApiTelemetry = 0;
 
-// ============================================================
-// OPERATIONAL STATE
-// ============================================================
-int  brightness1     = BRIGHT_20;
-bool manualOverride1 = false;
-unsigned long lastMotion1 = 0;
+int levelIndex[corridors] = {3, 3};
+int current[corridors] = {0, 0};
+int target[corridors] = {0, 0};
+bool isDay[corridors] = {false, false};
 
-int  brightness2     = BRIGHT_20;
-bool manualOverride2 = false;
-unsigned long lastMotion2 = 0;
+unsigned long lastMotion[corridors] = {0, 0};
+unsigned long lastLevelChange[corridors] = {0, 0};
+unsigned long lastFade[corridors] = {0, 0};
+unsigned long pirFirstHigh[corridors] = {0, 0};
 
-// ============================================================
-// SETUP
-// ============================================================
-void setup() {
-  pinMode(PIR1_PIN, INPUT);
-  pinMode(PIR2_PIN, INPUT);
-  pinMode(LED1_PIN, OUTPUT);
-  pinMode(LED2_PIN, OUTPUT);
+int naturalTarget0 = 0;
+int tailCurrent = 0;
+int tailTarget = 0;
+unsigned long tailLastFade = 0;
 
-  // تشغيل الممرين مبدئياً على وضع الاستعداد الاقتصادي 20%
-  analogWrite(LED1_PIN, brightness1);
-  analogWrite(LED2_PIN, brightness2);
+bool economy = false;
+bool handActive = false;
+bool handLatched = false;
+int handRef = 0;
+unsigned long handStart = 0;
+unsigned long lastUs = 0;
 
-  Serial.begin(9600);
-
-  // إرسال إشارة المصافحة الديناميكية ليعرف السيرفر عدد الممرات تلقائياً
-  Serial.print("SYSTEM_READY:WAREHOUSE:");
-  Serial.print(WAREHOUSE_ID);
-  Serial.print(":AISLES:");
-  Serial.println(AISLE_COUNT);
+// ===== دوال الـ Buzzer =====
+void beep(int times) {
+  for (int i = 0; i < times; i++) {
+    digitalWrite(buzzerPin, HIGH);
+    delay(150);
+    digitalWrite(buzzerPin, LOW);
+    delay(150);
+  }
 }
 
-// ============================================================
-// MAIN LOOP
-// ============================================================
-void loop() {
-  // 1. استقبال أوامر التحكم من السيرفر أو الذكاء الاصطناعي
+void longBeep() {
+  digitalWrite(buzzerPin, HIGH);
+  delay(600);
+  digitalWrite(buzzerPin, LOW);
+}
+
+bool isActive(int c) {
+  return (mode == 3 || mode == c + 1);
+}
+
+int readLdr(int pin) {
+  long sum = 0;
+  for (int i = 0; i < 5; i++) sum += analogRead(pin);
+  return sum / 5;
+}
+
+// فلترة الحركة
+bool motionConfirmed(int c, unsigned long now) {
+  if (digitalRead(pirPins[c]) == LOW) {
+    pirFirstHigh[c] = 0;
+    return false;
+  }
+  if (pirFirstHigh[c] == 0) pirFirstHigh[c] = now;
+  return (now - pirFirstHigh[c] >= pirConfirmMs);
+}
+
+int readDistanceCm() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  unsigned long d = pulseIn(echoPin, HIGH, 12000);
+  if (d == 0) return -1;
+  return (int)(d * 0.034 / 2);
+}
+
+void checkHand(unsigned long now) {
+  if (now - lastUs < usInterval) return;
+  lastUs = now;
+
+  int d = readDistanceCm();
+  bool present = (d > 0 && d <= handMaxCm);
+
+  if (present) {
+    if (!handActive) {
+      handActive = true;
+      handStart = now;
+      handRef = d;
+    }
+    else if (abs(d - handRef) > handTolerance) {
+      handStart = now;
+      handRef = d;
+    }
+    else if (!handLatched && now - handStart >= handHold) {
+      handLatched = true;
+      economy = !economy;
+      if (economy) beep(2);
+      else beep(1);
+    }
+  } else {
+    handActive = false;
+    handLatched = false;
+  }
+}
+
+// معالجة أوامر السيرفر والداشبورد وبوت التليجرام
+void handleIncomingCommands() {
   if (Serial.available() > 0) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
-    handleCommand(cmd);
+    if (cmd == "LIGHT:ALL:100%" || cmd == "LIGHT:1:100%" || cmd == "LIGHT:2:100%") {
+      mode = 3;
+      beep(1);
+    } else if (cmd == "LIGHT:ALL:OFF" || cmd == "LIGHT:1:OFF" || cmd == "LIGHT:2:OFF") {
+      mode = 0;
+      longBeep();
+    } else if (cmd == "LIGHT:ALL:AUTO" || cmd == "LIGHT:ALL:20%") {
+      mode = 3;
+    }
+  }
+}
+
+// ===== setup =====
+void setup() {
+  Serial.begin(9600);
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(tailPin, OUTPUT);
+  analogWrite(tailPin, 0);
+
+  for (int c = 0; c < corridors; c++) {
+    pinMode(pirPins[c], INPUT);
+    pinMode(pwmPins[c], OUTPUT);
+    analogWrite(pwmPins[c], current[c]);
   }
 
-  // 2. قراءة شدة ضوء النهار الطبيعي
-  int lux = analogRead(LDR_PIN);
+  // رسالة المصافحة للسيرفر ليعرف أن الأردوينو متصل بـ 2 ممرات تلقائياً
+  Serial.println("SYSTEM_READY:WAREHOUSE:1:AISLES:2");
+}
 
-  // 3. التحكم الآلي — الممر الأول
-  if (!manualOverride1) {
-    int m1 = digitalRead(PIR1_PIN);
-    if (m1 == HIGH) {
-      lastMotion1 = millis();
-      // حصاد ضوء النهار: إذا كان نور الشمس كافياً نكتفي بـ 60% (150 PWM)
-      int target1 = (lux > 600) ? 150 : BRIGHT_100;
-      fadeTo(LED1_PIN, brightness1, target1);
-      brightness1 = target1;
-    } else {
-      if (millis() - lastMotion1 > TIMEOUT_MS) {
-        fadeTo(LED1_PIN, brightness1, BRIGHT_20);
-        brightness1 = BRIGHT_20;
+// ===== loop =====
+void loop() {
+  unsigned long now = millis();
+
+  // استقبال أي أوامر من السيرفر
+  handleIncomingCommands();
+
+  // الزرار
+  bool buttonState = digitalRead(buttonPin);
+  if (buttonState == LOW && lastButtonState == HIGH && now - lastButtonTime > 200) {
+    lastButtonTime = now;
+    mode = (mode + 1) % 4;
+    if (mode == 0) longBeep();
+    else beep(mode);
+    ignoreUntil = millis() + graceTime;
+  }
+  lastButtonState = buttonState;
+
+  // إشارة الإيد (Ultrasonic)
+  checkHand(now);
+
+  for (int c = 0; c < corridors; c++) {
+    bool active = isActive(c);
+
+    if (!active) {
+      levelIndex[c] = levelCount - 1;
+      target[c] = (mode == 0) ? 0 : inactiveBrightness;
+    }
+    else {
+      int light = readLdr(ldrPins[c]);
+      if (!isDay[c] && light > dayOn) isDay[c] = true;
+      else if (isDay[c] && light < dayOff) isDay[c] = false;
+
+      if (motionConfirmed(c, now) && now >= ignoreUntil) {
+        lastMotion[c] = now;
+        lastLevelChange[c] = now;
+        levelIndex[c] = 0;
       }
+      else if (levelIndex[c] < levelCount - 1 &&
+               now - lastMotion[c] >= holdTime &&
+               now - lastLevelChange[c] >= levelTime) {
+        levelIndex[c]++;
+        lastLevelChange[c] = now;
+      }
+
+      if (isDay[c]) target[c] = daylightBrightness;
+      else target[c] = levels[levelIndex[c]];
+    }
+
+    if (c == 0) {
+      naturalTarget0 = target[0];
+      if (economy && active && !isDay[0]) target[0] = 255;
+    }
+
+    unsigned long interval = (!active || target[c] > current[c]) ? fadeFast : fadeSlow;
+    if (current[c] != target[c] && now - lastFade[c] >= interval) {
+      lastFade[c] = now;
+      if (current[c] < target[c]) current[c]++;
+      else current[c]--;
+      analogWrite(pwmPins[c], current[c]);
     }
   }
 
-  // 4. التحكم الآلي — الممر الثاني
-  if (!manualOverride2) {
-    int m2 = digitalRead(PIR2_PIN);
-    if (m2 == HIGH) {
-      lastMotion2 = millis();
-      int target2 = (lux > 600) ? 150 : BRIGHT_100;
-      fadeTo(LED2_PIN, brightness2, target2);
-      brightness2 = target2;
-    } else {
-      if (millis() - lastMotion2 > TIMEOUT_MS) {
-        fadeTo(LED2_PIN, brightness2, BRIGHT_20);
-        brightness2 = BRIGHT_20;
-      }
-    }
+  // الـ 4 التانيين (Tail)
+  tailTarget = economy ? min(naturalTarget0, ecoMax) : naturalTarget0;
+
+  unsigned long tailInterval;
+  if (tailTarget > tailCurrent) tailInterval = fadeFast;
+  else tailInterval = economy ? fadeEco : fadeSlow;
+
+  if (tailCurrent != tailTarget && now - tailLastFade >= tailInterval) {
+    tailLastFade = now;
+    if (tailCurrent < tailTarget) tailCurrent++;
+    else tailCurrent--;
+    analogWrite(tailPin, tailCurrent);
   }
 
-  // 5. إرسال البيانات الحية المتوافقة ديناميكياً كل ثانية
-  static unsigned long lastTelemetry = 0;
-  if (millis() - lastTelemetry >= 1000) {
-    lastTelemetry = millis();
+  // ============================================================
+  // إرسال الـ JSON التلقائي للسيرفر والـ API كل 800 مللي ثانية
+  // ============================================================
+  if (now - lastApiTelemetry >= 800) {
+    lastApiTelemetry = now;
 
-    int m1 = digitalRead(PIR1_PIN);
-    int m2 = digitalRead(PIR2_PIN);
-    int d1 = (brightness1 * 100) / 255;
-    int d2 = (brightness2 * 100) / 255;
+    int m1 = digitalRead(pirPins[0]);
+    int m2 = digitalRead(pirPins[1]);
+    int d1 = (current[0] * 100) / 255;
+    int d2 = (current[1] * 100) / 255;
+    int luxAvg = (readLdr(ldrPins[0]) + readLdr(ldrPins[1])) / 2;
 
-    // صيغة JSON ديناميكية:
-    // {"warehouse":1,"aisle_count":2,"aisles":[{"id":1,"motion":1,"dim":100},{"id":2,"motion":0,"dim":20}],"lux":420}
-    Serial.print("{\"warehouse\":");
-    Serial.print(WAREHOUSE_ID);
-    Serial.print(",\"aisle_count\":");
-    Serial.print(AISLE_COUNT);
-    Serial.print(",\"aisles\":[");
+    // JSON Format المتوافق 100% مع server.py
+    Serial.print("{\"warehouse\":1,\"aisle_count\":2,\"aisles\":[");
     Serial.print("{\"id\":1,\"motion\":");
     Serial.print(m1);
     Serial.print(",\"dim\":");
@@ -149,94 +280,9 @@ void loop() {
     Serial.print(",\"dim\":");
     Serial.print(d2);
     Serial.print("}],\"lux\":");
-    Serial.print(lux);
+    Serial.print(luxAvg);
+    Serial.print(",\"economy\":");
+    Serial.print(economy ? 1 : 0);
     Serial.println("}");
-  }
-
-  delay(50);
-}
-
-// ============================================================
-// دالة التعتيم الانسيابي (Smooth PWM Fading)
-// ============================================================
-void fadeTo(int pin, int from, int to) {
-  if (from == to) return;
-  if (from < to) {
-    for (int b = from; b <= to; b += 5) {
-      analogWrite(pin, b);
-      delay(12);
-    }
-  } else {
-    for (int b = from; b >= to; b -= 5) {
-      analogWrite(pin, b);
-      delay(12);
-    }
-  }
-  analogWrite(pin, to);
-}
-
-// ============================================================
-// معالجة الأوامر الواردة
-// ============================================================
-void handleCommand(String cmd) {
-  // ممر 1
-  if (cmd == "LIGHT:1:100%") {
-    manualOverride1 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_100);
-    brightness1 = BRIGHT_100;
-    Serial.println("ACK:LIGHT_1_100");
-  } else if (cmd == "LIGHT:1:20%") {
-    manualOverride1 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_20);
-    brightness1 = BRIGHT_20;
-    Serial.println("ACK:LIGHT_1_20");
-  } else if (cmd == "LIGHT:1:OFF") {
-    manualOverride1 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_OFF);
-    brightness1 = BRIGHT_OFF;
-    Serial.println("ACK:LIGHT_1_OFF");
-  } else if (cmd == "LIGHT:1:AUTO") {
-    manualOverride1 = false;
-    Serial.println("ACK:LIGHT_1_AUTO");
-
-  // ممر 2
-  } else if (cmd == "LIGHT:2:100%") {
-    manualOverride2 = true;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_100);
-    brightness2 = BRIGHT_100;
-    Serial.println("ACK:LIGHT_2_100");
-  } else if (cmd == "LIGHT:2:20%") {
-    manualOverride2 = true;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_20);
-    brightness2 = BRIGHT_20;
-    Serial.println("ACK:LIGHT_2_20");
-  } else if (cmd == "LIGHT:2:OFF") {
-    manualOverride2 = true;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_OFF);
-    brightness2 = BRIGHT_OFF;
-    Serial.println("ACK:LIGHT_2_OFF");
-  } else if (cmd == "LIGHT:2:AUTO") {
-    manualOverride2 = false;
-    Serial.println("ACK:LIGHT_2_AUTO");
-
-  // كل الممرات معاً (ALL)
-  } else if (cmd == "LIGHT:ALL:100%") {
-    manualOverride1 = true; manualOverride2 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_100); brightness1 = BRIGHT_100;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_100); brightness2 = BRIGHT_100;
-    Serial.println("ACK:LIGHT_ALL_100");
-  } else if (cmd == "LIGHT:ALL:20%") {
-    manualOverride1 = true; manualOverride2 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_20); brightness1 = BRIGHT_20;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_20); brightness2 = BRIGHT_20;
-    Serial.println("ACK:LIGHT_ALL_20");
-  } else if (cmd == "LIGHT:ALL:OFF") {
-    manualOverride1 = true; manualOverride2 = true;
-    fadeTo(LED1_PIN, brightness1, BRIGHT_OFF); brightness1 = BRIGHT_OFF;
-    fadeTo(LED2_PIN, brightness2, BRIGHT_OFF); brightness2 = BRIGHT_OFF;
-    Serial.println("ACK:LIGHT_ALL_OFF");
-  } else if (cmd == "LIGHT:ALL:AUTO") {
-    manualOverride1 = false; manualOverride2 = false;
-    Serial.println("ACK:LIGHT_ALL_AUTO");
   }
 }
