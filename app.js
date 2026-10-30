@@ -79,26 +79,24 @@ async function fetchTelemetry() {
     const res = await fetch('/api/telemetry', { cache: 'no-store' });
     if (!res.ok) throw new Error('Backend offline');
     const data = await res.json();
-    
+
     inventoryData = data.items;
     isHardwareOnline = data.hardware_connected;
-    
-    renderInventory(filterData(inventoryData));
-    updateTopStats(data.total_consumed, data.total_saved, data.total_money, data.active_units);
-    updateStatusBadge(data.hardware_connected, data.port);
+
+    renderInventory(inventoryData);
+    updateTopStats(data.total_consumed, data.total_saved, data.total_egp_saved || data.total_money, data.active_units || data.aisle_count);
+    updateHardwareBanner(data.hardware_connected, data.port, data.warehouse_handshake, data.lux, data.aisle_count || inventoryData.length);
+    updateMonthlyCycle(data.monthly_cycle);
 
   } catch (err) {
-    // Graceful fallback to standalone mode if server.py is not running
-    if (!inventoryData.length) {
-      generateFallbackData();
-    }
-    updateStatusBadge(false, null);
+    if (!inventoryData.length) generateFallbackData();
+    updateHardwareBanner(false, null, false, null, 2);
   }
 }
 
 function startPolling() {
   if (!pollingInterval) {
-    pollingInterval = setInterval(fetchTelemetry, 2000); // Sync every 2 seconds
+    pollingInterval = setInterval(fetchTelemetry, 2000);
   }
 }
 
@@ -109,14 +107,64 @@ function stopPolling() {
   }
 }
 
-function updateStatusBadge(connected, port) {
-  const meta = document.getElementById('dash-meta');
-  if (!meta) return;
+function updateMonthlyCycle(cycle) {
+  if (!cycle) return;
+  const elName = document.getElementById('mc-cycle-name');
+  const elDays = document.getElementById('mc-days-left');
+  const elEgp  = document.getElementById('mc-egp-total');
+  if (elName) elName.textContent = cycle.cycle_label;
+  if (elDays) elDays.textContent = `${cycle.days_remaining} يوم`;
+  if (elEgp)  elEgp.textContent  = `${cycle.monthly_egp_saved.toLocaleString()} ج.م`;
+}
 
-  if (connected) {
-    meta.innerHTML = `<span style="color:var(--emerald);font-weight:700;">● Live Arduino Hardware Online (${port || 'USB'})</span> · Real-time Sensor Grid Active`;
+async function resetMonthlyCycle() {
+  try {
+    const res = await fetch('/api/cycle/reset', { method: 'POST' });
+    if (!res.ok) throw new Error('Reset failed');
+    const data = await res.json();
+    updateMonthlyCycle(data.monthly_cycle);
+    showToast('✅ تم تصفير عداد الدورة الشهرية بنجاح!');
+    setTimeout(fetchTelemetry, 300);
+  } catch (e) {
+    showToast('⚠️ تعذر تصفير الدورة الشهرية');
+  }
+}
+
+function updateHardwareBanner(connected, port, handshake, lux, aisleCount) {
+  const banner    = document.getElementById('hw-banner');
+  const title     = document.getElementById('hw-banner-title');
+  const sub       = document.getElementById('hw-banner-sub');
+  const meta      = document.getElementById('dash-meta');
+  const luxBadge  = document.getElementById('hw-lux-badge');
+  const luxVal    = document.getElementById('hw-lux-val');
+  if (!banner || !title || !sub) return;
+
+  const countStr = aisleCount ? `${aisleCount} Dynamic Physical Aisles Active` : 'Dynamic Aisles Active';
+
+  if (connected && handshake) {
+    // Full hardware online — Warehouse 01 handshake confirmed
+    banner.className = 'hw-banner hw-banner-online';
+    title.innerHTML  = `🟢 Arduino Uno Connected · <strong>Warehouse 01 Online</strong> — ${countStr}`;
+    sub.textContent  = `Serial Port: ${port || 'USB'} · Firmware v2.1 · Dynamic Multi-Aisle Telemetry Active`;
+    if (meta) meta.innerHTML = `<span style="color:var(--emerald);font-weight:700;">● Live Arduino Hardware Online (${port || 'USB'})</span> · Warehouse 01 · ${countStr}`;
+    if (luxBadge && lux !== null && lux !== undefined) {
+      luxBadge.style.display = 'flex';
+      if (luxVal) luxVal.textContent = lux;
+    }
+  } else if (connected && !handshake) {
+    // Arduino connected but no handshake yet
+    banner.className = 'hw-banner hw-banner-connecting';
+    title.innerHTML  = `🟡 Arduino Detected — Auto-Discovering Warehouse Aisles…`;
+    sub.textContent  = `Port: ${port || 'USB'} · Establishing handshake & registering dynamic nodes`;
+    if (meta) meta.innerHTML = `<span style="color:var(--amber);font-weight:700;">● Arduino Detected · Discovering Aisles…</span>`;
+    if (luxBadge) luxBadge.style.display = 'none';
   } else {
-    meta.innerHTML = `<span style="color:var(--text-muted);font-weight:600;">● Telemetry Simulation Mode</span> · Run <code>python server.py</code> to connect physical Arduino`;
+    // Offline / simulation
+    banner.className = 'hw-banner hw-banner-searching';
+    title.innerHTML  = `🔍 No Arduino Detected — Running in Simulation Mode`;
+    sub.innerHTML    = `Run <code>python server.py</code> then connect Arduino USB cable to activate Live Hardware`;
+    if (meta) meta.innerHTML = `<span style="color:var(--text-muted);font-weight:600;">● Telemetry Simulation Mode</span> · Connect Arduino USB to activate Live Dashboard`;
+    if (luxBadge) luxBadge.style.display = 'none';
   }
 }
 
@@ -128,32 +176,38 @@ function updateTopStats(consumed, saved, money, units) {
 
   if (elConsumed) elConsumed.textContent = consumed.toLocaleString();
   if (elSaved)    elSaved.textContent    = saved.toLocaleString();
-  if (elMoney)    elMoney.textContent    = `$${money.toLocaleString()}`;
+  if (elMoney)    elMoney.textContent    = `${money.toLocaleString()} ج.م`;
   if (elUnits)    elUnits.textContent    = units;
 }
 
+
 /* ============================================================
-   RENDER INVENTORY CARDS
+   RENDER DUAL-AISLE INVENTORY CARDS
    ============================================================ */
 function renderInventory(items) {
   const grid = document.getElementById('inventory-grid');
   if (!grid) return;
 
-  if (!items.length) {
-    grid.innerHTML = `
-      <div style="color:var(--text-muted);padding:60px 0;grid-column:1/-1;text-align:center;">
-        <p style="font-size:1.1rem;font-weight:600;">No facilities match your search criteria.</p>
-        <span style="font-size:0.9rem;color:var(--text-dark);">Try clearing your search query or selecting 'All'</span>
-      </div>`;
+  if (!items || !items.length) {
+    grid.innerHTML = `<div style="color:var(--text-muted);padding:60px 0;grid-column:1/-1;text-align:center;"><p>No aisle data available.</p></div>`;
     return;
   }
 
-  grid.innerHTML = items.map(item => `
-    <article class="inv-card ${item.is_hardware ? 'hardware-node' : ''}" role="listitem" tabindex="0"
+  grid.innerHTML = items.map(item => {
+    const occupied   = item.motion;
+    const dim        = item.dim_pct !== undefined ? item.dim_pct : 20;
+    const dimBarPct  = Math.min(dim, 100);
+    const dimColor   = dim >= 90 ? '#10b981' : dim > 0 ? '#f59e0b' : '#64748b';
+    const occupancyBadge = occupied
+      ? `<span class="occ-badge occ-badge-occupied">🟢 عمال متواجدون · Occupied</span>`
+      : `<span class="occ-badge occ-badge-vacant">⚪ ممر شاغر · Vacant</span>`;
+
+    return `
+    <article class="inv-card hardware-node" role="listitem" tabindex="0"
              onclick="openModal(${item.id})"
              onkeydown="if(event.key==='Enter'||event.key===' ')openModal(${item.id})"
-             aria-label="${item.name} — ${item.status} status">
-      
+             aria-label="${item.name}">
+
       <div class="card-top">
         <div class="card-icon-wrap" aria-hidden="true">${item.icon}</div>
         <div class="card-status status-${item.status}">
@@ -162,10 +216,20 @@ function renderInventory(items) {
         </div>
       </div>
 
-      <div class="card-title">
-        ${item.name}
-      </div>
+      <div class="card-title">${item.name}</div>
       <div class="card-loc">${item.location}</div>
+
+      <!-- Occupancy Badge -->
+      <div style="margin:10px 0 6px;">${occupancyBadge}</div>
+
+      <!-- Dimming Level Bar -->
+      <div class="metric-row" style="margin-top:4px">
+        <span class="metric-label">Dimming Level</span>
+        <span class="metric-val" style="color:${dimColor};font-weight:700;">${dim}%</span>
+      </div>
+      <div class="progress-bar" style="margin-bottom:8px;">
+        <div class="progress-fill" style="width:${dimBarPct}%;background:${dimColor};transition:width 0.4s ease;"></div>
+      </div>
 
       <div class="card-metrics">
         <div class="metric-row">
@@ -173,7 +237,7 @@ function renderInventory(items) {
           <span class="metric-val red">${item.consumed.toLocaleString()} kWh</span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill" style="width:${Math.min((item.consumed/2400)*100, 100)}%; background:linear-gradient(90deg, #f43f5e, #fb7185);"></div>
+          <div class="progress-fill" style="width:${Math.min((item.consumed/1200)*100,100)}%;background:linear-gradient(90deg,#f43f5e,#fb7185);"></div>
         </div>
 
         <div class="metric-row" style="margin-top:6px">
@@ -181,54 +245,49 @@ function renderInventory(items) {
           <span class="metric-val grn">${item.saved.toLocaleString()} kWh</span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill" style="width:${Math.min((item.saved/1000)*100, 100)}%; background:var(--emerald);"></div>
+          <div class="progress-fill" style="width:${Math.min((item.saved/800)*100,100)}%;background:var(--emerald);"></div>
         </div>
 
         <div class="metric-row" style="margin-top:6px">
-          <span class="metric-label">Verified Dollars Saved</span>
-          <span class="metric-val ylw">$${item.money.toLocaleString()}</span>
+          <span class="metric-label">Verified Savings (الوفر المحقق)</span>
+          <span class="metric-val ylw">${(item.egp_saved || item.money).toLocaleString()} ج.م</span>
         </div>
-
         <div class="metric-row">
           <span class="metric-label">Efficiency Index</span>
-          <span class="metric-val" style="color:${item.eff >= 28 ? 'var(--emerald)' : item.eff >= 16 ? 'var(--amber)' : 'var(--rose)'}">
+          <span class="metric-val" style="color:${item.eff>=28?'var(--emerald)':item.eff>=16?'var(--amber)':'var(--rose)'}">
             ${item.eff}%
           </span>
         </div>
       </div>
+
+      <!-- Per-Aisle Quick Controls -->
+      <div class="aisle-controls" onclick="event.stopPropagation()">
+        <button class="ctrl-btn ctrl-100" onclick="sendControl(${item.id},'100%')">⚡ 100%</button>
+        <button class="ctrl-btn ctrl-20"  onclick="sendControl(${item.id},'20%')">🌙 20%</button>
+        <button class="ctrl-btn ctrl-off" onclick="sendControl(${item.id},'OFF')">🛑 OFF</button>
+        <button class="ctrl-btn ctrl-auto" onclick="sendControl(${item.id},'AUTO')">🔄 AUTO</button>
+      </div>
     </article>
-  `).join('');
+  `}).join('');
 }
 
 /* ============================================================
-   SEARCH & FILTER
+   SEND HARDWARE CONTROL COMMAND
    ============================================================ */
-function filterData(data) {
-  const input = document.getElementById('search-input');
-  const query = input ? input.value.toLowerCase().trim() : '';
-  let filtered = data;
-  
-  if (currentFilter !== 'all') {
-    filtered = filtered.filter(i => i.status === currentFilter);
+async function sendControl(unitId, mode) {
+  try {
+    const res = await fetch('/api/control', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ unit_id: unitId, mode: mode }),
+    });
+    if (!res.ok) throw new Error('Control failed');
+    const label = unitId === 0 ? 'All Aisles' : `Aisle 0${unitId}`;
+    showToast(`✅ ${label}: ${mode} command sent`);
+    setTimeout(fetchTelemetry, 300);
+  } catch (e) {
+    showToast('⚠️ Control command failed — is server.py running?');
   }
-  if (query) {
-    filtered = filtered.filter(i =>
-      i.name.toLowerCase().includes(query) ||
-      i.location.toLowerCase().includes(query)
-    );
-  }
-  return filtered;
-}
-
-function filterInventory() {
-  renderInventory(filterData(inventoryData));
-}
-
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  filterInventory();
 }
 
 function refreshInventory() {
@@ -249,7 +308,7 @@ function openModal(id) {
   document.getElementById('modal-subtitle').textContent   = `${item.location} · Efficiency Rating: ${item.eff}%`;
   document.getElementById('mm-consumed').textContent      = `${item.consumed.toLocaleString()} kWh`;
   document.getElementById('mm-saved').textContent         = `${item.saved.toLocaleString()} kWh`;
-  document.getElementById('mm-money').textContent         = `$${item.money.toLocaleString()}`;
+  document.getElementById('mm-money').textContent         = `${(item.egp_saved || item.money).toLocaleString()} ج.م`;
 
   const report = document.getElementById('weekly-report');
   report.classList.remove('show');
@@ -273,7 +332,7 @@ function buildReportHTML(item) {
   const dailySavings = DAYS.map(day => ({
     day,
     kwh:   Math.round(item.saved * (0.12 + Math.random() * 0.08)),
-    money: Math.round(item.money * (0.12 + Math.random() * 0.08)),
+    money: Math.round((item.egp_saved || item.money) * (0.12 + Math.random() * 0.08)),
   }));
 
   const totalKwh   = dailySavings.reduce((s, d) => s + d.kwh, 0);
@@ -288,7 +347,7 @@ function buildReportHTML(item) {
     <div class="report-row">
       <span class="day">${d.day}</span>
       <span style="font-family:var(--font-heading);font-weight:600;">${d.kwh} kWh saved</span>
-      <span style="color:var(--emerald);font-family:var(--font-heading);font-weight:700;">+${Math.round(d.kwh * 3.20).toLocaleString()} ج.م ($${d.money})</span>
+      <span style="color:var(--emerald);font-family:var(--font-heading);font-weight:700;">+${Math.round(d.kwh * 3.20).toLocaleString()} ج.م</span>
     </div>
   `).join('');
 
@@ -304,7 +363,7 @@ function buildReportHTML(item) {
     <div class="report-total" style="flex-direction:column;align-items:stretch;gap:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span>Net Weekly Verified Savings:</span>
-        <span style="color:#10b981;font-size:1.05rem;">${totalKwh.toLocaleString()} kWh · ${egpSavings.toLocaleString()} EGP ($${totalMoney})</span>
+        <span style="color:#10b981;font-size:1.05rem;">${totalKwh.toLocaleString()} kWh · ${egpSavings.toLocaleString()} ج.م (EGP)</span>
       </div>
       <div style="display:flex;gap:8px;margin-top:6px;">
         <button onclick="downloadAislePDF(activeCard)" class="btn btn-primary" style="flex:1;padding:8px 12px;font-size:0.82rem;display:flex;align-items:center;justify-content:center;gap:6px;">
@@ -370,7 +429,7 @@ function buildFullPdfDocument(item) {
       <div style="text-align:right;font-size:11px;color:#475569;line-height:1.6;">
         <div><b>Audit Date:</b> ${todayStr}</div>
         <div><b>Operating Mode:</b> <span style="color:#059669;font-weight:700;">${item.dim_pct || 20}% Standby Mode</span></div>
-        <div><b>Electricity Tariff:</b> 3.20 EGP/kWh ($0.065 USD)</div>
+        <div><b>Electricity Tariff:</b> 3.20 EGP/kWh (التعرفة الصناعية المصرية)</div>
       </div>
     </div>
 
@@ -389,8 +448,9 @@ function buildFullPdfDocument(item) {
       <div style="background:#fff;border:1px solid #e2e8f0;border-top:3px solid #d97706;border-radius:6px;padding:10px;text-align:center;">
         <div style="font-size:11px;color:#64748b;font-weight:600;">Financial Recovery</div>
         <div style="font-size:16px;font-weight:800;color:#d97706;margin-top:3px;">${egpTotal.toLocaleString()} ج.م</div>
-        <div style="font-size:9.5px;color:#64748b;">$${item.money.toLocaleString()} USD</div>
+        <div style="font-size:9.5px;color:#059669;font-weight:700;">الوفر المالي بالجنيه المصري</div>
       </div>
+
       <div style="background:#fff;border:1px solid #e2e8f0;border-top:3px solid #0284c7;border-radius:6px;padding:10px;text-align:center;">
         <div style="font-size:11px;color:#64748b;font-weight:600;">Efficiency Rating</div>
         <div style="font-size:16px;font-weight:800;color:#0284c7;margin-top:3px;">${item.eff}%</div>

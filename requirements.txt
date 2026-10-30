@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pyserial
+openai
+python-telegram-bot
+pydantic

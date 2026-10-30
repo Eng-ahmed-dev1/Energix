@@ -253,7 +253,7 @@
   <div class="container">
     <header class="dash-header">
       <div>
-        <h2>Facility Telemetry Dashboard</h2>
+        <h2>Warehouse 01 — Live Telemetry Dashboard</h2>
         <p class="dash-meta" id="dash-meta">Connecting to IoT Mesh Network…</p>
       </div>
       <button class="btn btn-primary" id="refresh-btn" onclick="refreshInventory()">
@@ -261,6 +261,42 @@
         <span>Sync Telemetry</span>
       </button>
     </header>
+
+    <!-- ══ HARDWARE CONNECTION BANNER ══ -->
+    <div id="hw-banner" class="hw-banner hw-banner-searching">
+      <div class="hw-banner-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="hw-banner-text">
+        <span class="hw-banner-title" id="hw-banner-title">🔍 Searching for Arduino USB…</span>
+        <span class="hw-banner-sub" id="hw-banner-sub">Run <code>python server.py</code> to connect physical hardware</span>
+      </div>
+      <div class="hw-banner-lux" id="hw-lux-badge" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <span id="hw-lux-val">—</span> lux
+      </div>
+    </div>
+
+
+    <!-- ══ MONTHLY BILLING CYCLE & RESET WIDGET (Restart by Month) ══ -->
+    <div id="monthly-cycle-widget" class="monthly-cycle-widget">
+      <div class="mc-left">
+        <span class="mc-icon">📅</span>
+        <div class="mc-text">
+          <span class="mc-title">دورة الفاتورة الشهرية: <strong id="mc-cycle-name">أكتوبر 2026</strong></span>
+          <span class="mc-sub">التعرفة الصناعية: <strong>3.20 ج.م/kWh</strong> · متبقي على تصفير الشهر تلقائياً: <strong id="mc-days-left">—</strong></span>
+        </div>
+      </div>
+      <div class="mc-right">
+        <div class="mc-stat">
+          <span class="mc-stat-lbl">وفر الشهر التراكمي:</span>
+          <span class="mc-stat-val" id="mc-egp-total">— ج.م</span>
+        </div>
+        <button class="btn-reset-cycle" onclick="resetMonthlyCycle()" title="تصفير عداد الدورة الشهرية لبدء شهر جديد">
+          🔄 تصفير الشهر (Reset)
+        </button>
+      </div>
+    </div>
 
     <!-- Top Metrics -->
     <div class="dash-stats">
@@ -283,33 +319,34 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <div class="ds-val" id="total-money" style="color:var(--amber);">—</div>
-        <div class="ds-lbl">Net Financial Recovery ($)</div>
+        <div class="ds-lbl">Net Financial Recovery (EGP / ج.م)</div>
       </div>
       <div class="dash-stat-card">
         <div class="ds-icon" style="color:var(--sky);">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <div class="ds-val" id="total-units">—</div>
-        <div class="ds-lbl">Active Grid Units</div>
+        <div class="ds-lbl">Dynamic Aisle Nodes (الممرات المكتشفة)</div>
       </div>
     </div>
 
-    <!-- Search & Filter Controls -->
-    <div class="inv-toolbar">
-      <div class="inv-search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="search-input" placeholder="Search facilities, aisles, or zones…" oninput="filterInventory()" aria-label="Search facilities" />
-      </div>
-      <div class="filter-btns">
-        <button class="filter-btn active" onclick="setFilter('all',this)">All Units</button>
-        <button class="filter-btn" onclick="setFilter('low',this)">Efficient (&gt;28%)</button>
-        <button class="filter-btn" onclick="setFilter('medium',this)">Moderate (16–28%)</button>
-        <button class="filter-btn" onclick="setFilter('high',this)">High Usage (&lt;16%)</button>
-      </div>
+
+
+    <!-- ══ MASTER WAREHOUSE CONTROLS ══ -->
+    <div class="master-controls">
+      <span class="master-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7l9-4 9 4v14H3V7z"/></svg>
+        Warehouse 01 Master Control:
+      </span>
+      <button class="ctrl-btn ctrl-100" onclick="sendControl(0,'100%')">⚡ All 100%</button>
+      <button class="ctrl-btn ctrl-20"  onclick="sendControl(0,'20%')">🌙 All 20%</button>
+      <button class="ctrl-btn ctrl-off" onclick="sendControl(0,'OFF')">🛑 All OFF</button>
+      <button class="ctrl-btn ctrl-auto" onclick="sendControl(0,'AUTO')">🔄 All AUTO</button>
     </div>
 
-    <!-- Inventory Cards Grid -->
+    <!-- ══ DUAL-AISLE LIVE MONITOR ══ -->
     <div class="inventory-grid" id="inventory-grid"></div>
+
   </div>
 </main>
 </div>

@@ -1345,3 +1345,148 @@ p {
   font-size: 0.88rem;
   line-height: 1.6;
 }
+
+/* ============================================================
+   HARDWARE DETECTION BANNER — Energix v2.0
+   ============================================================ */
+.hw-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  border: 1px solid;
+  transition: all 0.4s ease;
+}
+.hw-banner-online    { background: rgba(16,185,129,0.08);  border-color: rgba(16,185,129,0.35); color: #10b981; }
+.hw-banner-connecting{ background: rgba(245,158,11,0.08);  border-color: rgba(245,158,11,0.35); color: #f59e0b; }
+.hw-banner-searching { background: rgba(100,116,139,0.08); border-color: rgba(100,116,139,0.20);color: #94a3b8; }
+.hw-banner-icon  { flex-shrink: 0; opacity: 0.85; }
+.hw-banner-text  { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.hw-banner-title { font-weight: 700; font-size: 0.95rem; }
+.hw-banner-sub   { font-size: 0.8rem; opacity: 0.75; }
+.hw-banner-sub code { background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px; font-size:0.78rem; }
+.hw-banner-lux   { display:flex; align-items:center; gap:5px; font-size:0.82rem; font-weight:600;
+                   background:rgba(255,255,255,0.07); padding:4px 10px; border-radius:var(--radius-full); flex-shrink:0; }
+
+/* ============================================================
+   MASTER & PER-AISLE CONTROLS
+   ============================================================ */
+.master-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:24px;
+                   padding:14px 18px; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md); }
+.master-label    { font-size:0.82rem; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px; margin-right:6px; }
+.aisle-controls  { display:flex; gap:6px; margin-top:14px; flex-wrap:wrap; }
+.ctrl-btn        { padding:6px 12px; border-radius:var(--radius-sm); font-size:0.78rem; font-weight:700;
+                   border:none; cursor:pointer; transition:all 0.2s ease; font-family:var(--font-heading); }
+.ctrl-btn:hover  { filter:brightness(1.15); transform:translateY(-1px); }
+.ctrl-100  { background:rgba(16,185,129,0.2);  color:#10b981; border:1px solid rgba(16,185,129,0.35); }
+.ctrl-20   { background:rgba(14,165,233,0.15); color:#0ea5e9; border:1px solid rgba(14,165,233,0.35); }
+.ctrl-off  { background:rgba(244,63,94,0.15);  color:#f43f5e; border:1px solid rgba(244,63,94,0.35); }
+.ctrl-auto { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.35); }
+
+/* ============================================================
+   OCCUPANCY BADGES
+   ============================================================ */
+.occ-badge          { display:inline-flex; align-items:center; gap:5px; padding:4px 12px;
+                      border-radius:var(--radius-full); font-size:0.78rem; font-weight:700; }
+.occ-badge-occupied { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.30); }
+.occ-badge-vacant   { background:rgba(100,116,139,0.1); color:#94a3b8; border:1px solid rgba(100,116,139,0.20); }
+
+/* ============================================================
+   MONTHLY BILLING CYCLE & RESET WIDGET (Restart by Month)
+   ============================================================ */
+.monthly-cycle-widget {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.06) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mc-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mc-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.mc-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mc-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mc-title strong {
+  color: var(--emerald);
+}
+
+.mc-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mc-sub strong {
+  color: var(--text-sub);
+}
+
+.mc-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.mc-stat-lbl {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mc-stat-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f59e0b;
+  font-family: var(--font-heading);
+}
+
+.btn-reset-cycle {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-heading);
+}
+
+.btn-reset-cycle:hover {
+  background: rgba(245, 158, 11, 0.25);
+  transform: translateY(-1px);
+}
