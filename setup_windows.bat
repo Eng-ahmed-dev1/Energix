@@ -1,39 +1,37 @@
 @echo off
-chcp 65001 >nul
-title ENERGIX - تثبيت المكتبات (مرة واحدة فقط)
+title ENERGIX Setup Dependencies
+cd /d "%~dp0"
 
 echo ============================================================
-echo   ⚡ تثبيت جميع مكتبات مشروع ENERGIX لويندوز (Setup) ⚡
+echo   ENERGIX - Setup Dependencies
 echo ============================================================
 echo.
 
-:: 1. التحقق من وجود بايثون
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [X] خطأ: بايثون غير مثبت على هذا الجهاز أو لم يتم تفعيل خيار Add to PATH!
-    echo يرجى تثبيت Python وتفعيل "Add Python to PATH" ثم إعادة المحاولة.
+    echo [ERROR] Python is not installed or not in PATH.
+    echo Please install Python and check 'Add Python to PATH'.
     echo.
     pause
-    exit /b
+    exit /b 1
 )
 
-echo [✓] تم العثور على بايثون بنجاح.
-echo.
-echo جاري تحديث أداة pip وتثبيت جميع المكاتب المطلوبة من requirements.txt...
-echo ------------------------------------------------------------
+echo [1/2] Upgrading pip...
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-echo ------------------------------------------------------------
+
 echo.
+echo [2/2] Installing required packages...
+python -m pip install -r requirements.txt
 
 if %errorlevel% equ 0 (
+    echo.
     echo ============================================================
-    echo  🎉 تم تثبيت جميع المكتبات بنجاح 100%%!
-    echo  لست بحاجة لتشغيل هذا الملف مرة أخرى على هذا الجهاز.
-    echo  يمكنك الآن تشغيل المشروع مباشرة بالضغط على: run_demo.bat
+    echo  SUCCESS: All dependencies installed successfully.
+    echo  You can now run 'run_demo.bat' to start the project.
     echo ============================================================
 ) else (
-    echo [X] حدث خطأ أثناء التثبيت، يرجى التأكد من اتصال الإنترنت والمحاولة مرة أخرى.
+    echo.
+    echo [ERROR] Failed to install packages. Check internet connection.
 )
 
 echo.
